@@ -96,21 +96,21 @@ export default class Game extends Phaser.Scene {
     this.initX2();
 
     this.drawMouse();
-    // this.drawLaser();
+    this.drawLaser();
 
     this.drawScoreLabel();
 
     this.setCamera();
 
     // Взаимодействие мыши и лазера
-    // this.physics.add.overlap(
-    //   this.laser,
-    //   this.mouse,
-    //   //@ts-ignore
-    //   this.handleLaserCrash,
-    //   undefined,
-    //   true
-    // );
+    this.physics.add.overlap(
+      this.laser,
+      this.mouse,
+      //@ts-ignore
+      this.handleLaserCrash,
+      undefined,
+      true
+    );
     // Взаимодействие мыши и монеток
     this.physics.add.overlap(
       this.mouse,
@@ -151,9 +151,9 @@ export default class Game extends Phaser.Scene {
     this.despawnCoinOffScreen();
     this.respawnCoffee();
     this.respawnX2();
-    // this.respawnLaser();
+    this.respawnLaser();
 
-    // this.mouseGoHomeAfterTime(12, 55);
+    this.mouseGoHomeAfterTime(17, 55);
 
     // Начисляем зарплату пока мышь бежит
     if (this.mouse.mouseState === MouseState.Running) {
