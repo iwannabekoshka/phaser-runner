@@ -1,6 +1,5 @@
 import * as Phaser from "phaser";
 import ASSETS from "../../ASSETS";
-import { SCENES } from "../SCENES";
 
 enum MouseState {
   Running,
@@ -45,14 +44,29 @@ export default class Mouse extends Phaser.GameObjects.Container {
   /**
    * Ускорение мыши наверх
    */
-  accelerationY: number = -3000;
+  accelerationY = -3000;
 
   /**
    * Скорость мыши
    */
-  mouseSpeed: number = 200;
+  mouseSpeed = 200;
 
-  preUpdate() {
+  /**
+   * На сколько мышь ускоряется спустя время
+   */
+  deltaSpeed = 20;
+
+  /**
+   * Секунды для постепенного увеличения скорости
+   */
+  seconds = 0;
+
+  /**
+   * Время в секундах, спустя которое происходит ускорение
+   */
+  deltaSeconds = 5;
+
+  preUpdate(t: number, dt: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
 
     switch (this.mouseState) {
@@ -76,6 +90,9 @@ export default class Mouse extends Phaser.GameObjects.Container {
             this.mouse.play(ASSETS.mouse.animations.fall, true);
           }
         }
+
+        // Пока мышь бежит - ускоряем ее
+        this.speedUpMouseByTime(t);
 
         break;
       }
@@ -165,5 +182,21 @@ export default class Mouse extends Phaser.GameObjects.Container {
     body.setAccelerationY(0);
     body.setVelocityX(1000);
     this.toggleJetpack(false);
+  }
+
+  /**
+   * Ускоряет мышь спустя какое-то время
+   */
+  speedUpMouseByTime(time: number): void {
+    const body = this.body as Phaser.Physics.Arcade.Body;
+
+    const currentSecond = Math.ceil(time / 1000);
+
+    if (currentSecond - this.seconds >= this.deltaSeconds) {
+      this.seconds = currentSecond;
+
+      this.mouseSpeed += this.deltaSpeed;
+      body.setVelocityX(this.mouseSpeed);
+    }
   }
 }

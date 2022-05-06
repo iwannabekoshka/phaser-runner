@@ -4,7 +4,6 @@ import ASSETS from "../../ASSETS";
 import { IGameEdgesCoordinates } from "../../interfaces/IGameEdgesCoordinates";
 import Mouse from "./Mouse";
 import Laser from "./Laser";
-import { log } from "util";
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -108,7 +107,7 @@ export default class Game extends Phaser.Scene {
   update(time: number, delta: number) {
     this.moveBackground();
     this.despawnCoinOffScreen();
-    this.respawnLaser();
+    // this.respawnLaser();
 
     // this.mouseGoHomeAfterTime(12, 55);
 
