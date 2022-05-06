@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import { IGameEdgesCoordinates } from "../../interfaces/IGameEdgesCoordinates";
-import Mouse from "./Mouse";
+import Mouse, { MouseState } from "./Mouse";
 import Laser from "./Laser";
 
 export default class Game extends Phaser.Scene {
@@ -49,6 +49,11 @@ export default class Game extends Phaser.Scene {
    * Текст счета
    */
   scoreLabel!: Phaser.GameObjects.Text;
+
+  /**
+   * Секунды для начисления очков
+   */
+  seconds = 0;
 
   // Тут можно задавать дефолтные значения
   init() {
@@ -111,7 +116,13 @@ export default class Game extends Phaser.Scene {
 
     // this.mouseGoHomeAfterTime(12, 55);
 
-    if (this.mouse.mouseState === 2) {
+    // Начисляем зарплату пока мышь бежит
+    if (this.mouse.mouseState === MouseState.Running) {
+      this.updateScoreByTime(time);
+    }
+
+    // Мышь умерла - пошли на конечную сцену
+    if (this.mouse.mouseState === MouseState.Dead) {
       this.scene.run(SCENES.end, { score: this.score });
     }
   }
@@ -206,7 +217,7 @@ export default class Game extends Phaser.Scene {
     this.coins.remove(coin);
 
     // Увеличиваем счет
-    this.score += 1;
+    this.score += 100;
 
     this.updateScoreLabel();
   }
@@ -239,6 +250,20 @@ export default class Game extends Phaser.Scene {
    */
   updateScoreLabel(): void {
     this.scoreLabel.text = `Score: ${this.score}`;
+  }
+
+  /**
+   * Обновляет счет со временем
+   * @param time
+   */
+  updateScoreByTime(time: number): void {
+    const currentSecond = Math.ceil(time / 1000);
+    if (currentSecond - this.seconds >= 1) {
+      this.seconds = currentSecond;
+
+      this.score += 1;
+      this.updateScoreLabel();
+    }
   }
 
   /**

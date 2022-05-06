@@ -1,7 +1,7 @@
 import * as Phaser from "phaser";
 import ASSETS from "../../ASSETS";
 
-enum MouseState {
+export enum MouseState {
   Running,
   Killed,
   Dead,
