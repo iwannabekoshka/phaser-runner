@@ -110,7 +110,7 @@ export default class Game extends Phaser.Scene {
     this.despawnCoinOffScreen();
     this.respawnLaser();
 
-    this.mouseGoHomeAfterTime(12, 55);
+    // this.mouseGoHomeAfterTime(12, 55);
 
     if (this.mouse.mouseState === 2) {
       this.scene.run(SCENES.end, { score: this.score });
