@@ -52,7 +52,7 @@ const ASSETS = {
   },
   coin: {
     key: "coin",
-    imageUrl: "/game/house/items/object_coin.png",
+    imageUrl: "/game/office/buffs/plus_money.png",
   },
   buffCoffee: {
     key: "buffCoffee",

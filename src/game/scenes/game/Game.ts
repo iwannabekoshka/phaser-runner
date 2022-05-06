@@ -71,8 +71,6 @@ export default class Game extends Phaser.Scene {
 
     this.setWorldBounds();
 
-    // Отрисовка фона и объектов на нем
-    // Порядок означает z-index: раньше вызов - дальше объект
     this.drawBackground();
 
     this.spawnCoins();
@@ -194,11 +192,13 @@ export default class Game extends Phaser.Scene {
     const numCoins = Phaser.Math.Between(1, 20);
 
     for (let i = 0; i < numCoins; i++) {
-      const coin = this.coins.get(
-        x,
-        Phaser.Math.Between(100, this.scale.height - 100),
-        ASSETS.coin.key
-      ) as Phaser.Physics.Arcade.Sprite;
+      const coin = this.coins
+        .get(
+          x,
+          Phaser.Math.Between(100, this.scale.height - 100),
+          ASSETS.coin.key
+        )
+        .setScale(0.25) as Phaser.Physics.Arcade.Sprite;
 
       // make sure coin is active and visible
       coin.setVisible(true);
@@ -230,7 +230,7 @@ export default class Game extends Phaser.Scene {
     this.coins.remove(coin);
 
     // Увеличиваем счет
-    this.score += 100;
+    this.score += 50;
 
     this.updateScoreLabel();
   }
