@@ -70,6 +70,11 @@ export default class Game extends Phaser.Scene {
    */
   salary = 1;
 
+  /**
+   * Множитель очков в секунду
+   */
+  salaryMultiplier = 1;
+
   // Тут можно задавать дефолтные значения
   init() {
     // Обнуляем счет в начале игры
@@ -277,7 +282,7 @@ export default class Game extends Phaser.Scene {
    */
   drawScoreLabel(): void {
     this.scoreLabel = this.add
-      .text(10, 10, `Score: ${this.score}`)
+      .text(10, 10, `Score: ${this.score}. Multi: x${this.salaryMultiplier}`)
       .setScrollFactor(0);
   }
 
@@ -285,7 +290,7 @@ export default class Game extends Phaser.Scene {
    * Обновляет счет
    */
   updateScoreLabel(): void {
-    this.scoreLabel.text = `Score: ${this.score}`;
+    this.scoreLabel.text = `Score: ${this.score}. Multi: x${this.salaryMultiplier}`;
   }
 
   /**
@@ -297,7 +302,7 @@ export default class Game extends Phaser.Scene {
     if (currentSecond - this.seconds >= 1) {
       this.seconds = currentSecond;
 
-      this.score += this.salary;
+      this.score += this.salary * this.salaryMultiplier;
       this.updateScoreLabel();
     }
   }
@@ -460,9 +465,10 @@ export default class Game extends Phaser.Scene {
    * Хэндлер сбора x2
    */
   handleX2Collect(): void {
-    this.salary *= 2;
+    this.salaryMultiplier *= 2;
 
     this.spawnX2();
+    this.updateScoreLabel();
   }
 
   /**
