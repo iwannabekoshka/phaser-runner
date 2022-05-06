@@ -30,10 +30,12 @@ export default class Game extends Phaser.Scene {
    */
   coins!: Phaser.Physics.Arcade.StaticGroup;
 
+  coffee!: Phaser.GameObjects.Image;
+
   /**
    * Отступ от низа игры
    */
-  worldBoundBottom = 30;
+  worldBoundBottom = 50;
 
   /**
    * Отступ камеры от мыши
@@ -74,23 +76,24 @@ export default class Game extends Phaser.Scene {
     this.drawBackground();
 
     this.spawnCoins();
+    this.initCoffee();
 
     this.drawMouse();
-    this.drawLaser();
+    // this.drawLaser();
 
     this.drawScoreLabel();
 
     this.setCamera();
 
     // Взаимодействие мыши и лазера
-    this.physics.add.overlap(
-      this.laser,
-      this.mouse,
-      //@ts-ignore
-      this.handleLaserCrash,
-      undefined,
-      true
-    );
+    // this.physics.add.overlap(
+    //   this.laser,
+    //   this.mouse,
+    //   //@ts-ignore
+    //   this.handleLaserCrash,
+    //   undefined,
+    //   true
+    // );
     // Взаимодействие мыши и монеток
     this.physics.add.overlap(
       this.mouse,
@@ -106,12 +109,22 @@ export default class Game extends Phaser.Scene {
       callback: this.spawnCoins,
       callbackScope: this,
     });
+
+    // Взаимодействие мыши и кофе
+    this.physics.add.overlap(
+      this.mouse,
+      this.coffee,
+      this.handleCoffeeCollect,
+      undefined,
+      this
+    );
   }
 
   // Отрабатывает на каждый тик
   update(time: number, delta: number) {
     this.moveBackground();
     this.despawnCoinOffScreen();
+    this.respawnCoffee();
     // this.respawnLaser();
 
     // this.mouseGoHomeAfterTime(12, 55);
@@ -318,6 +331,60 @@ export default class Game extends Phaser.Scene {
    */
   handleLaserCrash(laser: Laser, mouse: Mouse): void {
     mouse.kill();
+  }
+
+  /**
+   * Инициализация кофе
+   */
+  initCoffee(): void {
+    this.coffee = this.physics.add
+      .staticImage(
+        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        this.scale.height / 2,
+        ASSETS.buffCoffee.key
+      )
+      .setScale(0.5);
+    const coffeeBody = this.coffee.body as Phaser.Physics.Arcade.StaticBody;
+    coffeeBody.setCircle(coffeeBody.width * 0.25);
+    coffeeBody.setOffset(coffeeBody.width / 2, coffeeBody.height / 2);
+  }
+
+  /**
+   * Спавнит кофе в рандомной точке
+   */
+  spawnCoffee(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    const coffeeBody = this.coffee.body as Phaser.Physics.Arcade.StaticBody;
+
+    const x = Phaser.Math.Between(
+      rightEdge + this.scale.width,
+      rightEdge + 2 * this.scale.width
+    );
+    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+
+    this.coffee.x = x;
+    this.coffee.y = y;
+
+    coffeeBody.updateFromGameObject();
+  }
+
+  /**
+   * Респавнит кофе, если оно вылезло за экран
+   */
+  respawnCoffee(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    if (this.coffee.x + this.coffee.width < leftEdge) {
+      this.spawnCoffee();
+    }
+  }
+
+  /**
+   * Хэндлер сбора кофе
+   */
+  handleCoffeeCollect(): void {
+    this.mouse.slowdownMouseByCoffee();
+    this.spawnCoffee();
   }
 
   /**

@@ -54,6 +54,7 @@ export default class Mouse extends Phaser.GameObjects.Container {
   /**
    * На сколько мышь ускоряется спустя время
    */
+  // TODO 20
   deltaSpeed = 20;
 
   /**
@@ -65,6 +66,11 @@ export default class Mouse extends Phaser.GameObjects.Container {
    * Время в секундах, спустя которое происходит ускорение
    */
   deltaSeconds = 5;
+
+  /**
+   * Время действия кофе, ms
+   */
+  coffeeTime = 5000;
 
   preUpdate(t: number, dt: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
@@ -198,5 +204,22 @@ export default class Mouse extends Phaser.GameObjects.Container {
       this.mouseSpeed += this.deltaSpeed;
       body.setVelocityX(this.mouseSpeed);
     }
+  }
+
+  /**
+   * Замедляет мышь на время
+   */
+  slowdownMouseByCoffee(): void {
+    const body = this.body as Phaser.Physics.Arcade.Body;
+
+    const prevSpeed = this.mouseSpeed;
+
+    this.mouseSpeed = prevSpeed * 0.5;
+    body.setVelocityX(this.mouseSpeed);
+
+    setTimeout(() => {
+      this.mouseSpeed = prevSpeed;
+      body.setVelocityX(this.mouseSpeed);
+    }, this.coffeeTime);
   }
 }

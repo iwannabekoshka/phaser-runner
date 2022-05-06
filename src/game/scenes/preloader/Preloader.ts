@@ -31,6 +31,9 @@ export default class Preloader extends Phaser.Scene {
 
     // Пикапы
     this.load.image(ASSETS.coin.key, ASSETS.coin.imageUrl);
+
+    // Баффы
+    this.load.image(ASSETS.buffCoffee.key, ASSETS.buffCoffee.imageUrl);
   }
 
   create() {

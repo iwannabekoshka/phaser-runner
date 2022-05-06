@@ -54,6 +54,10 @@ const ASSETS = {
     key: "coin",
     imageUrl: "/game/house/items/object_coin.png",
   },
+  buffCoffee: {
+    key: "buffCoffee",
+    imageUrl: "/game/office/buffs/coffee.png",
+  },
 };
 
 export default ASSETS;
