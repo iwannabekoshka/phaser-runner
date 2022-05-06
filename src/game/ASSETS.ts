@@ -58,6 +58,10 @@ const ASSETS = {
     key: "buffCoffee",
     imageUrl: "/game/office/buffs/coffee.png",
   },
+  buffX2: {
+    key: "buffX2",
+    imageUrl: "/game/office/buffs/x2.png",
+  },
 };
 
 export default ASSETS;

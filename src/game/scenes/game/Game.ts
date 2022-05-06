@@ -30,7 +30,15 @@ export default class Game extends Phaser.Scene {
    */
   coins!: Phaser.Physics.Arcade.StaticGroup;
 
+  /**
+   * Бафф кофе
+   */
   coffee!: Phaser.GameObjects.Image;
+
+  /**
+   * Бафф x2
+   */
+  x2!: Phaser.GameObjects.Image;
 
   /**
    * Отступ от низа игры
@@ -57,6 +65,11 @@ export default class Game extends Phaser.Scene {
    */
   seconds = 0;
 
+  /**
+   * Количество очков в секунду
+   */
+  salary = 1;
+
   // Тут можно задавать дефолтные значения
   init() {
     // Обнуляем счет в начале игры
@@ -75,6 +88,7 @@ export default class Game extends Phaser.Scene {
 
     this.spawnCoins();
     this.initCoffee();
+    this.initX2();
 
     this.drawMouse();
     // this.drawLaser();
@@ -116,6 +130,14 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     );
+    // Взаимодействие мыши и X2
+    this.physics.add.overlap(
+      this.mouse,
+      this.x2,
+      this.handleX2Collect,
+      undefined,
+      this
+    );
   }
 
   // Отрабатывает на каждый тик
@@ -123,6 +145,7 @@ export default class Game extends Phaser.Scene {
     this.moveBackground();
     this.despawnCoinOffScreen();
     this.respawnCoffee();
+    this.respawnX2();
     // this.respawnLaser();
 
     // this.mouseGoHomeAfterTime(12, 55);
@@ -274,7 +297,7 @@ export default class Game extends Phaser.Scene {
     if (currentSecond - this.seconds >= 1) {
       this.seconds = currentSecond;
 
-      this.score += 1;
+      this.score += this.salary;
       this.updateScoreLabel();
     }
   }
@@ -385,6 +408,61 @@ export default class Game extends Phaser.Scene {
   handleCoffeeCollect(): void {
     this.mouse.slowdownMouseByCoffee();
     this.spawnCoffee();
+  }
+
+  /**
+   * Инициализация x2
+   */
+  initX2(): void {
+    this.x2 = this.physics.add
+      .staticImage(
+        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        this.scale.height / 2,
+        ASSETS.buffX2.key
+      )
+      .setScale(0.5);
+    const x2Body = this.x2.body as Phaser.Physics.Arcade.StaticBody;
+    x2Body.setCircle(x2Body.width * 0.25);
+    x2Body.setOffset(x2Body.width / 2, x2Body.height / 2);
+  }
+
+  /**
+   * Спавнит x2 в рандомной точке
+   */
+  spawnX2(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    const x2Body = this.x2.body as Phaser.Physics.Arcade.StaticBody;
+
+    const x = Phaser.Math.Between(
+      rightEdge + this.scale.width,
+      rightEdge + 2 * this.scale.width
+    );
+    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+
+    this.x2.x = x;
+    this.x2.y = y;
+
+    x2Body.updateFromGameObject();
+  }
+
+  /**
+   * Респавнит x2, если оно вылезло за экран
+   */
+  respawnX2(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    if (this.x2.x + this.x2.width < leftEdge) {
+      this.spawnX2();
+    }
+  }
+
+  /**
+   * Хэндлер сбора x2
+   */
+  handleX2Collect(): void {
+    this.salary *= 2;
+
+    this.spawnX2();
   }
 
   /**
