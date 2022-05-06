@@ -41,6 +41,11 @@ export default class Game extends Phaser.Scene {
   x2!: Phaser.GameObjects.Image;
 
   /**
+   * Бафф перерыв
+   */
+  break!: Phaser.GameObjects.Image;
+
+  /**
    * Отступ от низа игры
    */
   worldBoundBottom = 50;
@@ -94,6 +99,7 @@ export default class Game extends Phaser.Scene {
     this.spawnCoins();
     this.initCoffee();
     this.initX2();
+    this.initBreak();
 
     this.drawMouse();
     this.drawLaser();
@@ -127,6 +133,14 @@ export default class Game extends Phaser.Scene {
       callbackScope: this,
     });
 
+    // Начисление зп каждую секунду
+    this.time.addEvent({
+      delay: 1000,
+      loop: true,
+      callback: this.updateScoreByTime,
+      callbackScope: this,
+    });
+
     // Взаимодействие мыши и кофе
     this.physics.add.overlap(
       this.mouse,
@@ -143,6 +157,14 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     );
+    // Взаимодействие мыши и перерыва
+    this.physics.add.overlap(
+      this.mouse,
+      this.break,
+      this.handleBreakCollect,
+      undefined,
+      this
+    );
   }
 
   // Отрабатывает на каждый тик
@@ -151,14 +173,10 @@ export default class Game extends Phaser.Scene {
     this.despawnCoinOffScreen();
     this.respawnCoffee();
     this.respawnX2();
+    this.respawnBreak();
     this.respawnLaser();
 
     this.mouseGoHomeAfterTime(17, 55);
-
-    // Начисляем зарплату пока мышь бежит
-    if (this.mouse.mouseState === MouseState.Running) {
-      this.updateScoreByTime(time);
-    }
 
     // Мышь умерла - пошли на конечную сцену
     if (this.mouse.mouseState === MouseState.Dead) {
@@ -217,7 +235,7 @@ export default class Game extends Phaser.Scene {
     let x = rightEdge + 100;
 
     // Рандомное количество монеток
-    const numCoins = Phaser.Math.Between(1, 20);
+    const numCoins = Phaser.Math.Between(1, 10);
 
     for (let i = 0; i < numCoins; i++) {
       const coin = this.coins
@@ -295,13 +313,12 @@ export default class Game extends Phaser.Scene {
 
   /**
    * Обновляет счет со временем
-   * @param time
    */
-  updateScoreByTime(time: number): void {
-    const currentSecond = Math.ceil(time / 1000);
-    if (currentSecond - this.seconds >= 1) {
-      this.seconds = currentSecond;
-
+  updateScoreByTime(): void {
+    if (
+      this.mouse.mouseState === MouseState.Running ||
+      this.mouse.mouseState === MouseState.Stopped
+    ) {
       this.score += this.salary * this.salaryMultiplier;
       this.updateScoreLabel();
     }
@@ -386,8 +403,8 @@ export default class Game extends Phaser.Scene {
     const coffeeBody = this.coffee.body as Phaser.Physics.Arcade.StaticBody;
 
     const x = Phaser.Math.Between(
-      rightEdge + this.scale.width,
-      rightEdge + 2 * this.scale.width
+      rightEdge + this.scale.width * 2,
+      rightEdge + this.scale.width * 6
     );
     const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
 
@@ -440,8 +457,8 @@ export default class Game extends Phaser.Scene {
     const x2Body = this.x2.body as Phaser.Physics.Arcade.StaticBody;
 
     const x = Phaser.Math.Between(
-      rightEdge + this.scale.width,
-      rightEdge + 2 * this.scale.width
+      rightEdge + this.scale.width * 2,
+      rightEdge + this.scale.width * 6
     );
     const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
 
@@ -469,6 +486,60 @@ export default class Game extends Phaser.Scene {
 
     this.spawnX2();
     this.updateScoreLabel();
+  }
+
+  /**
+   * Инициализация x2
+   */
+  initBreak(): void {
+    this.break = this.physics.add
+      .staticImage(
+        Phaser.Math.Between(this.scale.width * 2, this.scale.width * 6),
+        this.scale.height / 2,
+        ASSETS.buffBreak.key
+      )
+      .setScale(0.5);
+    const breakBody = this.break.body as Phaser.Physics.Arcade.StaticBody;
+    breakBody.setCircle(breakBody.width * 0.25);
+    breakBody.setOffset(breakBody.width / 2, breakBody.height / 2);
+  }
+
+  /**
+   * Спавнит перерыв в рандомной точке
+   */
+  spawnBreak(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    const breakBody = this.break.body as Phaser.Physics.Arcade.StaticBody;
+
+    const x = Phaser.Math.Between(
+      rightEdge + this.scale.width * 2,
+      rightEdge + this.scale.width * 6
+    );
+    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+
+    this.break.x = x;
+    this.break.y = y;
+
+    breakBody.updateFromGameObject();
+  }
+
+  /**
+   * Респавнит x2, если оно вылезло за экран
+   */
+  respawnBreak(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    if (this.break.x + this.break.width < leftEdge) {
+      this.spawnBreak();
+    }
+  }
+
+  /**
+   * Хэндлер сбора x2
+   */
+  handleBreakCollect(): void {
+    this.mouse.stopMouseByBreak();
+    this.spawnBreak();
   }
 
   /**

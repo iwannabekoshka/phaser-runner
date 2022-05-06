@@ -3,6 +3,7 @@ import ASSETS from "../../ASSETS";
 
 export enum MouseState {
   Running,
+  Stopped,
   Killed,
   Dead,
 }
@@ -71,6 +72,11 @@ export default class Mouse extends Phaser.GameObjects.Container {
    * Время действия кофе, ms
    */
   coffeeTime = 5000;
+
+  /**
+   * Время перерыва
+   */
+  breakTime = 10000;
 
   preUpdate(t: number, dt: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
@@ -194,6 +200,9 @@ export default class Mouse extends Phaser.GameObjects.Container {
    * Ускоряет мышь спустя какое-то время
    */
   speedUpMouseByTime(time: number): void {
+    if (this.mouseState === MouseState.Stopped) {
+      return;
+    }
     const body = this.body as Phaser.Physics.Arcade.Body;
 
     const currentSecond = Math.ceil(time / 1000);
@@ -221,5 +230,23 @@ export default class Mouse extends Phaser.GameObjects.Container {
       this.mouseSpeed = prevSpeed;
       body.setVelocityX(this.mouseSpeed);
     }, this.coffeeTime);
+  }
+
+  stopMouseByBreak(): void {
+    const body = this.body as Phaser.Physics.Arcade.Body;
+
+    const prevSpeed = this.mouseSpeed;
+
+    this.mouseSpeed = 0;
+    body.setVelocityX(this.mouseSpeed);
+
+    this.mouseState = MouseState.Stopped;
+
+    setTimeout(() => {
+      this.mouseSpeed = prevSpeed;
+      body.setVelocityX(this.mouseSpeed);
+
+      this.mouseState = MouseState.Running;
+    }, this.breakTime);
   }
 }
