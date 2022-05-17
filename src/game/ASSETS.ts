@@ -70,6 +70,10 @@ const ASSETS = {
     key: "buffPvs",
     imageUrl: "/game/office/buffs/pvs.png",
   },
+  buffMentor: {
+    key: "buffMentor",
+    imageUrl: "/game/office/buffs/mentor.png",
+  },
 };
 
 export default ASSETS;

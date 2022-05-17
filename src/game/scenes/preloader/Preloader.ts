@@ -37,6 +37,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.buffX2.key, ASSETS.buffX2.imageUrl);
     this.load.image(ASSETS.buffBreak.key, ASSETS.buffBreak.imageUrl);
     this.load.image(ASSETS.buffPvs.key, ASSETS.buffPvs.imageUrl);
+    this.load.image(ASSETS.buffMentor.key, ASSETS.buffMentor.imageUrl);
   }
 
   create() {

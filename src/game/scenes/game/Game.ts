@@ -56,6 +56,21 @@ export default class Game extends Phaser.Scene {
   invincibilityLabel!: Phaser.GameObjects.Text;
 
   /**
+   * Бафф ментор
+   */
+  mentor!: Phaser.GameObjects.Image;
+
+  /**
+   * Флаг есть ли бафф ментора
+   */
+  isMentor = false;
+
+  /**
+   * Текст ментора
+   */
+  mentorLabel!: Phaser.GameObjects.Text;
+
+  /**
    * Отступ от низа игры
    */
   worldBoundBottom = 50;
@@ -111,12 +126,14 @@ export default class Game extends Phaser.Scene {
     this.initX2();
     this.initBreak();
     this.initInvincibility();
+    this.initMentor();
 
     this.drawMouse();
     this.drawLaser();
 
     this.drawScoreLabel();
     this.drawInvincibilityLabel();
+    this.drawMentorLabel();
 
     this.setCamera();
 
@@ -185,6 +202,14 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     );
+    // Взаимодействие мыши и ментора
+    this.physics.add.overlap(
+      this.mouse,
+      this.mentor,
+      this.handleMentorCollect,
+      undefined,
+      this
+    );
   }
 
   // Отрабатывает на каждый тик
@@ -195,6 +220,7 @@ export default class Game extends Phaser.Scene {
     this.respawnX2();
     this.respawnBreak();
     this.respawnInvincibility();
+    this.respawnMentor();
     this.respawnLaser();
 
     this.mouseGoHomeAfterTime(17, 55);
@@ -376,6 +402,8 @@ export default class Game extends Phaser.Scene {
   }
 
   respawnLaser(): void {
+    if (this.isMentor) return;
+
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
 
     const body = this.laser.body as Phaser.Physics.Arcade.StaticBody;
@@ -645,6 +673,83 @@ export default class Game extends Phaser.Scene {
   updateInvincibilityLabel(): void {
     const text = this.mouse.isInvincible ? "Неуязвимость!" : "";
     this.invincibilityLabel.text = text;
+  }
+
+  /**
+   * Инициализация кофе
+   */
+  initMentor(): void {
+    this.mentor = this.physics.add
+      .staticImage(
+        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        this.scale.height / 2,
+        ASSETS.buffMentor.key
+      )
+      .setScale(0.5);
+    const mentorBody = this.mentor.body as Phaser.Physics.Arcade.StaticBody;
+    mentorBody.setCircle(mentorBody.width * 0.25);
+    mentorBody.setOffset(mentorBody.width / 2, mentorBody.height / 2);
+  }
+
+  /**
+   * Спавнит ментора в рандомной точке
+   */
+  spawnMentor(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    const mentorBody = this.mentor.body as Phaser.Physics.Arcade.StaticBody;
+
+    const x = Phaser.Math.Between(
+      rightEdge + this.scale.width * 2,
+      rightEdge + this.scale.width * 6
+    );
+    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+
+    this.mentor.x = x;
+    this.mentor.y = y;
+
+    mentorBody.updateFromGameObject();
+  }
+
+  /**
+   * Респавнит кофе, если оно вылезло за экран
+   */
+  respawnMentor(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    if (this.mentor.x + this.mentor.width < leftEdge) {
+      this.spawnMentor();
+    }
+  }
+
+  /**
+   * Хэндлер сбора кофе
+   */
+  handleMentorCollect(): void {
+    this.isMentor = true;
+    this.spawnMentor();
+
+    this.updateMentorLabel();
+
+    setTimeout(() => {
+      this.isMentor = false;
+
+      this.updateMentorLabel();
+    }, 10000);
+  }
+
+  /**
+   * Пишет под ментором ли ты
+   */
+  drawMentorLabel(): void {
+    this.mentorLabel = this.add.text(400, 10, "").setScrollFactor(0);
+  }
+
+  /**
+   * Обновляет сообщения о менторе
+   */
+  updateMentorLabel(): void {
+    const text = this.isMentor ? "Ментор спаси!" : "";
+    this.mentorLabel.text = text;
   }
 
   /**
