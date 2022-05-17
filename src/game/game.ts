@@ -14,6 +14,7 @@ export default new Phaser.Game({
     default: "arcade",
     arcade: {
       gravity: { y: 1800 },
+      //TODO не заливать на прод
       debug: false,
     },
   },
