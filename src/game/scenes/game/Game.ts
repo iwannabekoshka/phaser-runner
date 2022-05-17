@@ -217,11 +217,11 @@ export default class Game extends Phaser.Scene {
   update(time: number, delta: number) {
     this.moveBackground();
     this.despawnCoinOffScreen();
-    this.respawnCoffee();
-    this.respawnX2();
+    // this.respawnCoffee();
+    // this.respawnX2();
     this.respawnBreak();
-    this.respawnInvincibility();
-    this.respawnMentor();
+    // this.respawnInvincibility();
+    // this.respawnMentor();
     this.respawnLaser();
 
     this.mouseGoHomeAfterTime(17, 55);
@@ -363,10 +363,7 @@ export default class Game extends Phaser.Scene {
    * Обновляет счет со временем
    */
   updateScoreByTime(): void {
-    if (
-      this.mouse.mouseState === MouseState.Running ||
-      this.mouse.mouseState === MouseState.Stopped
-    ) {
+    if (this.mouse.mouseState === MouseState.Running) {
       this.score += this.salary * this.salaryMultiplier;
       this.updateScoreLabel();
     }
