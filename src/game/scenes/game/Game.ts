@@ -46,6 +46,16 @@ export default class Game extends Phaser.Scene {
   break!: Phaser.GameObjects.Image;
 
   /**
+   * Бафф неуязвимость
+   */
+  invincibility!: Phaser.GameObjects.Image;
+
+  /**
+   * Текст неуязвимости
+   */
+  invincibilityLabel!: Phaser.GameObjects.Text;
+
+  /**
    * Отступ от низа игры
    */
   worldBoundBottom = 50;
@@ -100,11 +110,13 @@ export default class Game extends Phaser.Scene {
     this.initCoffee();
     this.initX2();
     this.initBreak();
+    this.initInvincibility();
 
     this.drawMouse();
     this.drawLaser();
 
     this.drawScoreLabel();
+    this.drawInvincibilityLabel();
 
     this.setCamera();
 
@@ -165,6 +177,14 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     );
+    // Взаимодействие мыши и неуязвимости
+    this.physics.add.overlap(
+      this.mouse,
+      this.invincibility,
+      this.handleInvincibilityCollect,
+      undefined,
+      this
+    );
   }
 
   // Отрабатывает на каждый тик
@@ -174,6 +194,7 @@ export default class Game extends Phaser.Scene {
     this.respawnCoffee();
     this.respawnX2();
     this.respawnBreak();
+    this.respawnInvincibility();
     this.respawnLaser();
 
     this.mouseGoHomeAfterTime(17, 55);
@@ -375,6 +396,8 @@ export default class Game extends Phaser.Scene {
    * Столкновение с лазером
    */
   handleLaserCrash(laser: Laser, mouse: Mouse): void {
+    if (mouse.isInvincible) return;
+
     mouse.kill();
   }
 
@@ -489,7 +512,7 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Инициализация x2
+   * Инициализация перерыва
    */
   initBreak(): void {
     this.break = this.physics.add
@@ -540,6 +563,88 @@ export default class Game extends Phaser.Scene {
   handleBreakCollect(): void {
     this.mouse.stopMouseByBreak();
     this.spawnBreak();
+  }
+
+  /**
+   * Инициализация неуязвимости
+   */
+  initInvincibility(): void {
+    this.invincibility = this.physics.add
+      .staticImage(
+        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        this.scale.height / 2,
+        ASSETS.buffPvs.key
+      )
+      .setScale(0.5);
+    const invincibilityBody = this.invincibility
+      .body as Phaser.Physics.Arcade.StaticBody;
+    invincibilityBody.setCircle(invincibilityBody.width * 0.25);
+    invincibilityBody.setOffset(
+      invincibilityBody.width / 2,
+      invincibilityBody.height / 2
+    );
+  }
+
+  /**
+   * Спавнит неуязвимость в рандомной точке
+   */
+  spawnInvincibility(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    const invincibilityBody = this.invincibility
+      .body as Phaser.Physics.Arcade.StaticBody;
+
+    const x = Phaser.Math.Between(
+      rightEdge + this.scale.width * 2,
+      rightEdge + this.scale.width * 6
+    );
+    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+
+    this.invincibility.x = x;
+    this.invincibility.y = y;
+
+    invincibilityBody.updateFromGameObject();
+  }
+
+  /**
+   * Респавнит неуязвимость, если оно вылезло за экран
+   */
+  respawnInvincibility(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    if (this.invincibility.x + this.invincibility.width < leftEdge) {
+      this.spawnInvincibility();
+    }
+  }
+
+  /**
+   * Хэндлер сбора неуязвимости
+   */
+  handleInvincibilityCollect(): void {
+    this.spawnInvincibility();
+    this.mouse.isInvincible = true;
+
+    this.updateInvincibilityLabel();
+
+    setTimeout(() => {
+      this.mouse.isInvincible = false;
+
+      this.updateInvincibilityLabel();
+    }, 10000);
+  }
+
+  /**
+   * Пишет неуязвим ли ты
+   */
+  drawInvincibilityLabel(): void {
+    this.invincibilityLabel = this.add.text(300, 10, "").setScrollFactor(0);
+  }
+
+  /**
+   * Обновляет сообщения об неуязвимости
+   */
+  updateInvincibilityLabel(): void {
+    const text = this.mouse.isInvincible ? "Неуязвимость!" : "";
+    this.invincibilityLabel.text = text;
   }
 
   /**

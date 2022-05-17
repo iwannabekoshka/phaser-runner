@@ -66,6 +66,10 @@ const ASSETS = {
     key: "buffBreak",
     imageUrl: "/game/office/buffs/donut.png",
   },
+  buffPvs: {
+    key: "buffPvs",
+    imageUrl: "/game/office/buffs/pvs.png",
+  },
 };
 
 export default ASSETS;

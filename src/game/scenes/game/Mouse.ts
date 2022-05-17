@@ -33,6 +33,11 @@ export default class Mouse extends Phaser.GameObjects.Container {
   mouseState = MouseState.Running;
 
   /**
+   * Неуязвима ли мышь
+   */
+  isInvincible = false;
+
+  /**
    * Огни из жёпы
    */
   flames!: Phaser.GameObjects.Sprite;
