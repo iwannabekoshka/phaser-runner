@@ -109,6 +109,7 @@ export default class Game extends Phaser.Scene {
   init() {
     // Обнуляем счет в начале игры
     this.score = 0;
+    this.salaryMultiplier = 1;
 
     this.coins = this.physics.add.staticGroup();
   }
