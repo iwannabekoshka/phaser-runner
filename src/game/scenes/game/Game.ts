@@ -215,6 +215,10 @@ export default class Game extends Phaser.Scene {
 
   // Отрабатывает на каждый тик
   update(time: number, delta: number) {
+    if (this.isMentor) {
+      this.despawnLaser();
+    }
+
     this.moveBackground();
     this.despawnCoinOffScreen();
     this.respawnCoffee();
@@ -224,7 +228,7 @@ export default class Game extends Phaser.Scene {
     this.respawnMentor();
     this.respawnLaser();
 
-    this.mouseGoHomeAfterTime(17, 55);
+    // this.mouseGoHomeAfterTime(17, 55);
 
     // Мышь умерла - пошли на конечную сцену
     if (this.mouse.mouseState === MouseState.Dead) {
@@ -416,6 +420,16 @@ export default class Game extends Phaser.Scene {
       body.position.x = this.laser.x + body.offset.x;
       body.position.y = this.laser.y + 15;
     }
+  }
+
+  /**
+   * Удаляет лазер с экрана
+   */
+  despawnLaser(): void {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    this.laser.x = leftEdge - 100;
+    const body = this.laser.body as Phaser.Physics.Arcade.StaticBody;
+    body.position.x = this.laser.x + body.offset.x;
   }
 
   /**
@@ -674,7 +688,7 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Инициализация кофе
+   * Инициализация ментора
    */
   initMentor(): void {
     this.mentor = this.physics.add
@@ -710,7 +724,7 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Респавнит кофе, если оно вылезло за экран
+   * Респавнит ментора, если оно вылезло за экран
    */
   respawnMentor(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
@@ -720,7 +734,7 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Хэндлер сбора кофе
+   * Хэндлер сбора ментора
    */
   handleMentorCollect(): void {
     this.isMentor = true;
