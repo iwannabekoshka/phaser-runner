@@ -31,6 +31,11 @@ export default class Game extends Phaser.Scene {
   coins!: Phaser.Physics.Arcade.StaticGroup;
 
   /**
+   * Группа неприятностей
+   */
+  debuffs!: Phaser.Physics.Arcade.StaticGroup;
+
+  /**
    * Бафф кофе
    */
   coffee!: Phaser.GameObjects.Image;
@@ -112,6 +117,7 @@ export default class Game extends Phaser.Scene {
     this.salaryMultiplier = 1;
 
     this.coins = this.physics.add.staticGroup();
+    this.debuffs = this.physics.add.staticGroup();
   }
 
   // Создание всего и вся
@@ -123,6 +129,7 @@ export default class Game extends Phaser.Scene {
     this.drawBackground();
 
     this.spawnCoins();
+    this.spawnDebuffs();
     this.initCoffee();
     this.initX2();
     this.initBreak();
@@ -130,7 +137,7 @@ export default class Game extends Phaser.Scene {
     this.initMentor();
 
     this.drawMouse();
-    this.drawLaser();
+    // this.drawLaser();
 
     this.drawScoreLabel();
     this.drawInvincibilityLabel();
@@ -139,11 +146,20 @@ export default class Game extends Phaser.Scene {
     this.setCamera();
 
     // Взаимодействие мыши и лазера
+    // this.physics.add.overlap(
+    //   this.laser,
+    //   this.mouse,
+    //   //@ts-ignore
+    //   this.handleLaserCrash,
+    //   undefined,
+    //   true
+    // );
+    // Взаимодействие мыши и неприятностей
     this.physics.add.overlap(
-      this.laser,
       this.mouse,
+      this.debuffs,
       //@ts-ignore
-      this.handleLaserCrash,
+      this.handleMouseCrash,
       undefined,
       true
     );
@@ -160,6 +176,13 @@ export default class Game extends Phaser.Scene {
       delay: 5000,
       loop: true,
       callback: this.spawnCoins,
+      callbackScope: this,
+    });
+    // Респавн неприятностей
+    this.time.addEvent({
+      delay: 5000,
+      loop: true,
+      callback: this.spawnDebuffs,
       callbackScope: this,
     });
 
@@ -216,17 +239,18 @@ export default class Game extends Phaser.Scene {
   // Отрабатывает на каждый тик
   update(time: number, delta: number) {
     if (this.isMentor) {
-      this.despawnLaser();
+      this.despawnDebuffs();
     }
 
     this.moveBackground();
     this.despawnCoinOffScreen();
+    this.despawnDebuffOffScreen();
     this.respawnCoffee();
     this.respawnX2();
     this.respawnBreak();
     this.respawnInvincibility();
     this.respawnMentor();
-    this.respawnLaser();
+    // this.respawnLaser();
 
     // this.mouseGoHomeAfterTime(17, 55);
 
@@ -374,6 +398,83 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
+   * Спавнит неприятности
+   */
+  spawnDebuffs(): void {
+    if (this.isMentor) return;
+
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    // Стартовая координата спавна монеток
+    let x = rightEdge + 100;
+
+    // Рандомное количество дебаффов
+    const numDebuffs = Phaser.Math.Between(1, 4);
+
+    const debuffsAssets = [
+      "debuffBug",
+      "debuffDeadline",
+      "debuffDebt",
+      "debuffDeploy",
+      "debuffTestFailed",
+    ];
+
+    for (let i = 0; i < numDebuffs; i++) {
+      const randomAssetIndex = Math.floor(Math.random() * debuffsAssets.length);
+      const randomAssetKey = debuffsAssets[randomAssetIndex];
+
+      const debuff = this.debuffs
+        .get(
+          x,
+          Phaser.Math.Between(100, this.scale.height - 100),
+          // @ts-ignore
+          ASSETS[randomAssetKey].key
+        )
+        .setScale(0.75) as Phaser.Physics.Arcade.Sprite;
+
+      // make sure coin is active and visible
+      debuff.setVisible(true);
+      debuff.setActive(true);
+
+      // enable and adjust physics body to be a circle
+      const body = debuff.body as Phaser.Physics.Arcade.StaticBody;
+      body.setCircle(body.width * 0.5);
+      body.enable = true;
+
+      body.updateFromGameObject();
+
+      // move x a random amount
+      x += debuff.width * 1.5;
+    }
+  }
+
+  /**
+   * Уничтожает неприятность, если она за экраном
+   */
+  despawnDebuffOffScreen() {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    this.debuffs.children.each((child) => {
+      const debuff = child as Phaser.Physics.Arcade.Sprite;
+      if (debuff.x + debuff.width / 2 < leftEdge) {
+        this.debuffs.remove(child);
+      }
+    });
+  }
+
+  /**
+   * Уничтожает неприятности при подборе ментора
+   */
+  despawnDebuffs() {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+
+    this.debuffs.children.each((child) => {
+      const debuff = child as Phaser.Physics.Arcade.Sprite;
+      debuff.x = leftEdge - 100;
+    });
+  }
+
+  /**
    * Рисует Мышь
    */
   drawMouse(): void {
@@ -436,6 +537,15 @@ export default class Game extends Phaser.Scene {
    * Столкновение с лазером
    */
   handleLaserCrash(laser: Laser, mouse: Mouse): void {
+    if (mouse.isInvincible) return;
+
+    mouse.kill();
+  }
+
+  /**
+   * Столкновение с неприятностями
+   */
+  handleMouseCrash(mouse: Mouse, debuffs: Phaser.GameObjects.GameObject): void {
     if (mouse.isInvincible) return;
 
     mouse.kill();

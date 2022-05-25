@@ -74,6 +74,26 @@ const ASSETS = {
     key: "buffMentor",
     imageUrl: "/game/office/buffs/mentor.png",
   },
+  debuffBug: {
+    key: "debuffBug",
+    imageUrl: "/game/office/debuffs/bug.png",
+  },
+  debuffDeadline: {
+    key: "debuffDeadline",
+    imageUrl: "/game/office/debuffs/deadline.png",
+  },
+  debuffDebt: {
+    key: "debuffDebt",
+    imageUrl: "/game/office/debuffs/debt.png",
+  },
+  debuffDeploy: {
+    key: "debuffDeploy",
+    imageUrl: "/game/office/debuffs/deploy.png",
+  },
+  debuffTestFailed: {
+    key: "debuffTestFailed",
+    imageUrl: "/game/office/debuffs/test_failed.png",
+  },
 };
 
 export default ASSETS;
