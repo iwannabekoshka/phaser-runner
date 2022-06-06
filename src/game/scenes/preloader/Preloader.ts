@@ -13,9 +13,9 @@ export default class Preloader extends Phaser.Scene {
 
     //Mouse
     this.load.atlas(
-      ASSETS.mouse.key,
-      ASSETS.mouse.imageUrl,
-      ASSETS.mouse.dataFileUrl
+      ASSETS.player.key,
+      ASSETS.player.imageUrl,
+      ASSETS.player.dataFileUrl
     );
 
     // Объекты на фоне
@@ -54,11 +54,11 @@ export default class Preloader extends Phaser.Scene {
     console.log("preloader");
 
     // Анимации
-    this.createAnimationMouseRun();
+    this.createAnimationPlayerRun();
     this.createAnimationFlames();
-    this.createAnimationMouseFly();
-    this.createAnimationMouseFall();
-    this.createAnimationMouseDeath();
+    this.createAnimationPlayerFly();
+    this.createAnimationPlayerFall();
+    this.createAnimationPlayerDeath();
 
     // После загрузки ассетов идем в меню
     this.scene.start(SCENES.menu);
@@ -67,14 +67,15 @@ export default class Preloader extends Phaser.Scene {
   /**
    * Создает анимацию бега мыши
    */
-  createAnimationMouseRun(): void {
+  createAnimationPlayerRun(): void {
     this.anims.create({
-      key: ASSETS.mouse.animations.run,
+      key: ASSETS.player.animations.run,
       frames: [
-        { key: ASSETS.mouse.key, frame: "rocketmouse_run01.png" },
-        { key: ASSETS.mouse.key, frame: "rocketmouse_run02.png" },
-        { key: ASSETS.mouse.key, frame: "rocketmouse_run03.png" },
-        { key: ASSETS.mouse.key, frame: "rocketmouse_run04.png" },
+        { key: ASSETS.player.key, frame: "anim_run_1.png" },
+        { key: ASSETS.player.key, frame: "anim_run_2.png" },
+        { key: ASSETS.player.key, frame: "anim_run_3.png" },
+        { key: ASSETS.player.key, frame: "anim_run_4.png" },
+        { key: ASSETS.player.key, frame: "anim_run_5.png" },
       ],
       frameRate: 10,
       repeat: -1, // infinity
@@ -86,10 +87,10 @@ export default class Preloader extends Phaser.Scene {
    */
   createAnimationFlames(): void {
     this.anims.create({
-      key: ASSETS.mouse.animations.flamesOn,
+      key: ASSETS.player.animations.flamesOn,
       frames: [
-        { key: ASSETS.mouse.key, frame: "flame1.png" },
-        { key: ASSETS.mouse.key, frame: "flame2.png" },
+        { key: ASSETS.player.key, frame: "anim_fire_1.png" },
+        { key: ASSETS.player.key, frame: "anim_fire_2.png" },
       ],
       frameRate: 10,
       repeat: -1, // infinity
@@ -99,10 +100,13 @@ export default class Preloader extends Phaser.Scene {
   /**
    * Создает анимацию полета мыши
    */
-  createAnimationMouseFly(): void {
+  createAnimationPlayerFly(): void {
     this.anims.create({
-      key: ASSETS.mouse.animations.fly,
-      frames: [{ key: ASSETS.mouse.key, frame: "rocketmouse_fly01.png" }],
+      key: ASSETS.player.animations.fly,
+      frames: [
+        { key: ASSETS.player.key, frame: "anim_up_1.png" },
+        { key: ASSETS.player.key, frame: "anim_up_2.png" },
+      ],
       frameRate: 10,
       repeat: -1, // infinity
     });
@@ -112,10 +116,13 @@ export default class Preloader extends Phaser.Scene {
    * Создает анимацию падения мыши
    * и моего морального духа
    */
-  createAnimationMouseFall(): void {
+  createAnimationPlayerFall(): void {
     this.anims.create({
-      key: ASSETS.mouse.animations.fall,
-      frames: [{ key: ASSETS.mouse.key, frame: "rocketmouse_fall01.png" }],
+      key: ASSETS.player.animations.fall,
+      frames: [
+        { key: ASSETS.player.key, frame: "anim_down_1.png" },
+        { key: ASSETS.player.key, frame: "anim_down_2.png" },
+      ],
       frameRate: 10,
       repeat: -1, // infinity
     });
@@ -124,13 +131,10 @@ export default class Preloader extends Phaser.Scene {
   /**
    * Создаёт анимацию смерти
    */
-  createAnimationMouseDeath(): void {
+  createAnimationPlayerDeath(): void {
     this.anims.create({
-      key: ASSETS.mouse.animations.death,
-      frames: [
-        { key: ASSETS.mouse.key, frame: "rocketmouse_dead01.png" },
-        { key: ASSETS.mouse.key, frame: "rocketmouse_dead02.png" },
-      ],
+      key: ASSETS.player.animations.death,
+      frames: [{ key: ASSETS.player.key, frame: "anim_dead.png" }],
       frameRate: 10,
       repeat: 0,
     });

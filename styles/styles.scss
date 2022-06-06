@@ -1,3 +1,5 @@
+@use './variables' as var;
+
 *,
 *::before,
 *::after {
@@ -13,7 +15,8 @@ body {
 
   font-family: monospace;
 
-  background-color: hsl(280, 100%, 50%);
+  //background-color: hsl(280, 100%, 50%);
+  background-color: var.$test;
   color: white;
 }
 

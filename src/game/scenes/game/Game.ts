@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import { IGameEdgesCoordinates } from "../../interfaces/IGameEdgesCoordinates";
-import Mouse, { MouseState } from "./Mouse";
+import Player, { PlayerState } from "./Player";
 import Laser from "./Laser";
 
 export default class Game extends Phaser.Scene {
@@ -13,7 +13,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Главный герой - мышь
    */
-  mouse!: Mouse;
+  mouse!: Player;
 
   /**
    * Задний фон
@@ -255,7 +255,7 @@ export default class Game extends Phaser.Scene {
     // this.mouseGoHomeAfterTime(17, 55);
 
     // Мышь умерла - пошли на конечную сцену
-    if (this.mouse.mouseState === MouseState.Dead) {
+    if (this.mouse.playerState === PlayerState.Dead) {
       this.scene.run(SCENES.end, { score: this.score });
     }
   }
@@ -391,7 +391,7 @@ export default class Game extends Phaser.Scene {
    * Обновляет счет со временем
    */
   updateScoreByTime(): void {
-    if (this.mouse.mouseState === MouseState.Running) {
+    if (this.mouse.playerState === PlayerState.Running) {
       this.score += this.salary * this.salaryMultiplier;
       this.updateScoreLabel();
     }
@@ -479,7 +479,7 @@ export default class Game extends Phaser.Scene {
    */
   drawMouse(): void {
     // Спрайт мыши
-    this.mouse = new Mouse(
+    this.mouse = new Player(
       this,
       this.scale.width / 4,
       this.scale.height - this.worldBoundBottom
@@ -536,7 +536,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Столкновение с лазером
    */
-  handleLaserCrash(laser: Laser, mouse: Mouse): void {
+  handleLaserCrash(laser: Laser, mouse: Player): void {
     if (mouse.isInvincible) return;
 
     mouse.kill();
@@ -545,7 +545,10 @@ export default class Game extends Phaser.Scene {
   /**
    * Столкновение с неприятностями
    */
-  handleMouseCrash(mouse: Mouse, debuffs: Phaser.GameObjects.GameObject): void {
+  handleMouseCrash(
+    mouse: Player,
+    debuffs: Phaser.GameObjects.GameObject
+  ): void {
     if (mouse.isInvincible) return;
 
     mouse.kill();

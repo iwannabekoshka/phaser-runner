@@ -1,13 +1,13 @@
 import * as Phaser from "phaser";
 import ASSETS from "../../ASSETS";
 
-export enum MouseState {
+export enum PlayerState {
   Running,
   Killed,
   Dead,
 }
 
-export default class Mouse extends Phaser.GameObjects.Container {
+export default class Player extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
 
@@ -15,7 +15,7 @@ export default class Mouse extends Phaser.GameObjects.Container {
     scene.physics.add.existing(this);
 
     this.initFlames(scene);
-    this.initMouse(scene);
+    this.initPlayer(scene);
     this.initCursors(scene);
 
     this.toggleJetpack(false);
@@ -24,17 +24,19 @@ export default class Mouse extends Phaser.GameObjects.Container {
   /**
    * Мышь
    */
-  mouse!: Phaser.GameObjects.Sprite;
+  player!: Phaser.GameObjects.Sprite;
 
   /**
    * Состояние мыши
    */
-  mouseState = MouseState.Running;
+  playerState = PlayerState.Running;
 
   /**
    * Неуязвима ли мышь
    */
   isInvincible = false;
+
+  isFalling = false;
 
   /**
    * Огни из жёпы
@@ -49,7 +51,7 @@ export default class Mouse extends Phaser.GameObjects.Container {
   /**
    * Ускорение мыши наверх
    */
-  accelerationY = -3000;
+  accelerationY = -3500;
 
   /**
    * Скорость мыши
@@ -85,45 +87,47 @@ export default class Mouse extends Phaser.GameObjects.Container {
   preUpdate(t: number, dt: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
 
-    switch (this.mouseState) {
-      case MouseState.Running: {
+    switch (this.playerState) {
+      case PlayerState.Running: {
         // Если нажат пробел
-        if (this.cursors.space?.isDown) {
+        if (this.cursors.space?.isDown && !this.isFalling) {
           body.setAccelerationY(this.accelerationY);
           this.toggleJetpack(true);
 
           // Анимация полета
-          this.mouse.play(ASSETS.mouse.animations.fly, true);
+          this.player.play(ASSETS.player.animations.fly, true);
         } else {
           body.setAccelerationY(0);
           this.toggleJetpack(false);
 
           if (body.blocked.down) {
             // Дефолтная анимация бега
-            this.mouse.play(ASSETS.mouse.animations.run, true);
+            this.player.play(ASSETS.player.animations.run, true);
+            this.isFalling = false;
           } else {
             // Анимация падения
-            this.mouse.play(ASSETS.mouse.animations.fall, true);
+            this.player.play(ASSETS.player.animations.fall, true);
+            this.isFalling = true;
           }
         }
 
         // Пока мышь бежит - ускоряем ее
-        this.speedUpMouseByTime(t);
+        this.speedUpPlayerByTime(t);
 
         break;
       }
 
-      case MouseState.Killed: {
+      case PlayerState.Killed: {
         body.velocity.x *= 0.99;
 
         if (body.velocity.x <= 5) {
-          this.mouseState = MouseState.Dead;
+          this.playerState = PlayerState.Dead;
         }
 
         break;
       }
 
-      case MouseState.Dead: {
+      case PlayerState.Dead: {
         body.setVelocity(0, 0);
 
         break;
@@ -135,21 +139,21 @@ export default class Mouse extends Phaser.GameObjects.Container {
    * Добавляет мышь
    * @param scene
    */
-  initMouse(scene: Phaser.Scene): void {
+  initPlayer(scene: Phaser.Scene): void {
     // Мышь
-    this.mouse = scene.add
-      .sprite(0, 0, ASSETS.mouse.key)
+    this.player = scene.add
+      .sprite(0, 0, ASSETS.player.key)
       .setOrigin(0.5, 1)
-      .play(ASSETS.mouse.animations.run);
+      .play(ASSETS.player.animations.run);
 
     // Добавляет объект к контейнеру
-    this.add(this.mouse);
+    this.add(this.player);
 
     // Сопоставляем физическое тело мыши и спрайт
     const body = this.body as Phaser.Physics.Arcade.Body;
     // Коэффициенты честно подобраны рандомно, никакой логики
-    body.setSize(this.mouse.width * 0.7, this.mouse.height * 0.8);
-    body.setOffset(-this.mouse.width * 0.45, -this.mouse.height * 0.95);
+    body.setSize(this.player.width * 0.7, this.player.height * 0.8);
+    body.setOffset(-this.player.width * 0.45, -this.player.height * 0.95);
 
     // Даем мыши скорость
     body.setVelocityX(this.mouseSpeed);
@@ -161,8 +165,8 @@ export default class Mouse extends Phaser.GameObjects.Container {
    */
   initFlames(scene: Phaser.Scene): void {
     this.flames = scene.add
-      .sprite(-63, -17, ASSETS.mouse.key)
-      .play(ASSETS.mouse.animations.flamesOn);
+      .sprite(-22, -11, ASSETS.player.key)
+      .play(ASSETS.player.animations.flamesOn);
     this.add(this.flames);
   }
 
@@ -186,13 +190,13 @@ export default class Mouse extends Phaser.GameObjects.Container {
    * Убивает мышь.
    */
   kill() {
-    if (this.mouseState !== MouseState.Running) {
+    if (this.playerState !== PlayerState.Running) {
       return;
     }
 
-    this.mouseState = MouseState.Killed;
+    this.playerState = PlayerState.Killed;
 
-    this.mouse.play(ASSETS.mouse.animations.death);
+    this.player.play(ASSETS.player.animations.death);
 
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setAccelerationY(0);
@@ -203,7 +207,7 @@ export default class Mouse extends Phaser.GameObjects.Container {
   /**
    * Ускоряет мышь спустя какое-то время
    */
-  speedUpMouseByTime(time: number): void {
+  speedUpPlayerByTime(time: number): void {
     if (this.mouseSpeed === 0) {
       return;
     }

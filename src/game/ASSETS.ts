@@ -10,15 +10,15 @@ const ASSETS = {
     // imageUrl: "/game/house/bg/bg_repeat_340x640.png",
     imageUrl: "/game/office/bg.png",
   },
-  mouse: {
-    key: "mouse",
-    imageUrl: "/game/mouse/mouse.png",
-    dataFileUrl: "/game/mouse/mouse.json",
+  player: {
+    key: "player",
+    imageUrl: "/game/player/player.png",
+    dataFileUrl: "/game/player/player.json",
     animations: {
-      run: "animationMouseRun",
-      flamesOn: "animationMouseFlamesOn",
-      fly: "animationMouseFly",
-      fall: "animationMouseFall",
+      run: "animationPlayerRun",
+      flamesOn: "animationPlayerFlamesOn",
+      fly: "animationPlayerFly",
+      fall: "animationPlayerFall",
       death: "death",
     },
   },
