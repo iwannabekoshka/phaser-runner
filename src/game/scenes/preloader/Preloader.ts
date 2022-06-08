@@ -11,23 +11,12 @@ export default class Preloader extends Phaser.Scene {
     // Background
     this.load.image(ASSETS.bg.key, ASSETS.bg.imageUrl);
 
-    //Mouse
+    // Игрок
     this.load.atlas(
       ASSETS.player.key,
       ASSETS.player.imageUrl,
       ASSETS.player.dataFileUrl
     );
-
-    // Объекты на фоне
-    this.load.image(ASSETS.mousehole.key, ASSETS.mousehole.imageUrl);
-    this.load.image(ASSETS.bookcase_1.key, ASSETS.bookcase_1.imageUrl);
-    this.load.image(ASSETS.bookcase_2.key, ASSETS.bookcase_2.imageUrl);
-    this.load.image(ASSETS.window_1.key, ASSETS.window_1.imageUrl);
-    this.load.image(ASSETS.window_2.key, ASSETS.window_2.imageUrl);
-
-    // Лазеры
-    this.load.image(ASSETS.laserEnd.key, ASSETS.laserEnd.imageUrl);
-    this.load.image(ASSETS.laserMiddle.key, ASSETS.laserMiddle.imageUrl);
 
     // Пикапы
     this.load.image(ASSETS.coin.key, ASSETS.coin.imageUrl);

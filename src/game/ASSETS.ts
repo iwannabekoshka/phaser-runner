@@ -7,8 +7,7 @@
 const ASSETS = {
   bg: {
     key: "bg",
-    // imageUrl: "/game/house/bg/bg_repeat_340x640.png",
-    imageUrl: "/game/office/bg.png",
+    imageUrl: "/game/office/background_new.png",
   },
   player: {
     key: "player",
@@ -21,34 +20,6 @@ const ASSETS = {
       fall: "animationPlayerFall",
       death: "death",
     },
-  },
-  mousehole: {
-    key: "mousehole",
-    imageUrl: "/game/house/objects/object_mousehole.png",
-  },
-  bookcase_1: {
-    key: "bookcase_1",
-    imageUrl: "/game/house/objects/object_bookcase1.png",
-  },
-  bookcase_2: {
-    key: "bookcase_2",
-    imageUrl: "/game/house/objects/object_bookcase2.png",
-  },
-  window_1: {
-    key: "window_1",
-    imageUrl: "/game/house/objects/object_window1.png",
-  },
-  window_2: {
-    key: "window_2",
-    imageUrl: "/game/house/objects/object_window2.png",
-  },
-  laserEnd: {
-    key: "laserEnd",
-    imageUrl: "/game/house/objects/object_laser_end.png",
-  },
-  laserMiddle: {
-    key: "laserMiddle",
-    imageUrl: "/game/house/objects/object_laser.png",
   },
   coin: {
     key: "coin",

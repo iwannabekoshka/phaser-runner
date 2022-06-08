@@ -5,110 +5,117 @@ import { IGameEdgesCoordinates } from "../../interfaces/IGameEdgesCoordinates";
 import Player, { PlayerState } from "./Player";
 import Laser from "./Laser";
 
+const overlapEntities = [
+  {
+    name: ASSETS.buffCoffee.key,
+    xFrom: 0,
+    xTo: 1,
+  },
+  {
+    name: ASSETS.buffX2.key,
+    xFrom: 0,
+    xTo: 1,
+  },
+  {
+    name: ASSETS.buffBreak.key,
+    xFrom: 0,
+    xTo: 1,
+  },
+  {
+    name: ASSETS.buffPvs.key,
+    xFrom: 0,
+    xTo: 1,
+  },
+  {
+    name: ASSETS.buffMentor.key,
+    xFrom: 0,
+    xTo: 1,
+  },
+];
+
 export default class Game extends Phaser.Scene {
   constructor() {
     super(SCENES.game);
   }
 
   /**
-   * Главный герой - мышь
+   * Главный герой
    */
-  mouse!: Player;
-
+  player!: Player;
   /**
    * Задний фон
    */
   background!: Phaser.GameObjects.TileSprite;
-
-  /**
-   * Лазер
-   */
-  laser!: Laser;
-
   /**
    * Группа монеток
    */
   coins!: Phaser.Physics.Arcade.StaticGroup;
-
   /**
    * Группа неприятностей
    */
   debuffs!: Phaser.Physics.Arcade.StaticGroup;
-
   /**
    * Бафф кофе
    */
-  coffee!: Phaser.GameObjects.Image;
-
+  buffCoffee!: Phaser.GameObjects.Image;
   /**
    * Бафф x2
    */
-  x2!: Phaser.GameObjects.Image;
-
+  buffX2!: Phaser.GameObjects.Image;
   /**
    * Бафф перерыв
    */
-  break!: Phaser.GameObjects.Image;
-
+  buffBreak!: Phaser.GameObjects.Image;
   /**
    * Бафф неуязвимость
    */
-  invincibility!: Phaser.GameObjects.Image;
-
+  buffPvs!: Phaser.GameObjects.Image;
   /**
    * Текст неуязвимости
    */
   invincibilityLabel!: Phaser.GameObjects.Text;
-
   /**
    * Бафф ментор
    */
-  mentor!: Phaser.GameObjects.Image;
-
+  buffMentor!: Phaser.GameObjects.Image;
   /**
    * Флаг есть ли бафф ментора
    */
   isMentor = false;
-
   /**
    * Текст ментора
    */
   mentorLabel!: Phaser.GameObjects.Text;
-
   /**
    * Отступ от низа игры
    */
   worldBoundBottom = 50;
-
   /**
-   * Отступ камеры от мыши
+   * Отступ камеры
    */
   cameraFollowOffset = new Phaser.Math.Vector2(-200, 0);
-
   /**
    * Счет
    */
   score = 0;
-
   /**
    * Текст счета
    */
   scoreLabel!: Phaser.GameObjects.Text;
-
   /**
    * Секунды для начисления очков
    */
   seconds = 0;
-
   /**
    * Количество очков в секунду
    */
   salary = 1;
-
   /**
    * Множитель очков в секунду
    */
   salaryMultiplier = 1;
+  /** Минимальное расстояние между ништяками */
+  overlapMargin = 2;
 
   // Тут можно задавать дефолтные значения
   init() {
@@ -122,22 +129,15 @@ export default class Game extends Phaser.Scene {
 
   // Создание всего и вся
   create() {
-    console.log("game");
-
     this.setWorldBounds();
 
     this.drawBackground();
 
-    this.spawnCoins();
+    // this.spawnCoins();
     this.spawnDebuffs();
-    this.initCoffee();
-    this.initX2();
-    this.initBreak();
-    this.initInvincibility();
-    this.initMentor();
+    this.initBuffs();
 
-    this.drawMouse();
-    // this.drawLaser();
+    this.drawPlayer();
 
     this.drawScoreLabel();
     this.drawInvincibilityLabel();
@@ -145,39 +145,73 @@ export default class Game extends Phaser.Scene {
 
     this.setCamera();
 
-    // Взаимодействие мыши и лазера
+    //region Collisions
+    // Взаимодействие мыши и неприятностей
     // this.physics.add.overlap(
-    //   this.laser,
-    //   this.mouse,
+    //   this.player,
+    //   this.debuffs,
     //   //@ts-ignore
-    //   this.handleLaserCrash,
+    //   this.handleMouseCrash,
     //   undefined,
     //   true
     // );
-    // Взаимодействие мыши и неприятностей
-    this.physics.add.overlap(
-      this.mouse,
-      this.debuffs,
-      //@ts-ignore
-      this.handleMouseCrash,
-      undefined,
-      true
-    );
-    // Взаимодействие мыши и монеток
-    this.physics.add.overlap(
-      this.mouse,
-      this.coins,
-      this.handleCoinCollect,
-      undefined,
-      this
-    );
+    // // Взаимодействие мыши и монеток
+    // this.physics.add.overlap(
+    //   this.player,
+    //   this.coins,
+    //   this.handleCoinCollect,
+    //   undefined,
+    //   this
+    // );
+    // // Взаимодействие мыши и кофе
+    // this.physics.add.overlap(
+    //   this.player,
+    //   this.coffee,
+    //   this.handleCoffeeCollect,
+    //   undefined,
+    //   this
+    // );
+    // // Взаимодействие мыши и X2
+    // this.physics.add.overlap(
+    //   this.player,
+    //   this.x2,
+    //   this.handleX2Collect,
+    //   undefined,
+    //   this
+    // );
+    // // Взаимодействие мыши и перерыва
+    // this.physics.add.overlap(
+    //   this.player,
+    //   this.break,
+    //   this.handleBreakCollect,
+    //   undefined,
+    //   this
+    // );
+    // // Взаимодействие мыши и неуязвимости
+    // this.physics.add.overlap(
+    //   this.player,
+    //   this.invincibility,
+    //   this.handleInvincibilityCollect,
+    //   undefined,
+    //   this
+    // );
+    // // Взаимодействие мыши и ментора
+    // this.physics.add.overlap(
+    //   this.player,
+    //   this.mentor,
+    //   this.handleMentorCollect,
+    //   undefined,
+    //   this
+    // );
+    //endregion Collisions
+
     // Респавн монеток
-    this.time.addEvent({
-      delay: 5000,
-      loop: true,
-      callback: this.spawnCoins,
-      callbackScope: this,
-    });
+    // this.time.addEvent({
+    //   delay: 5000,
+    //   loop: true,
+    //   callback: this.spawnCoins,
+    //   callbackScope: this,
+    // });
     // Респавн неприятностей
     this.time.addEvent({
       delay: 5000,
@@ -185,7 +219,6 @@ export default class Game extends Phaser.Scene {
       callback: this.spawnDebuffs,
       callbackScope: this,
     });
-
     // Начисление зп каждую секунду
     this.time.addEvent({
       delay: 1000,
@@ -193,47 +226,6 @@ export default class Game extends Phaser.Scene {
       callback: this.updateScoreByTime,
       callbackScope: this,
     });
-
-    // Взаимодействие мыши и кофе
-    this.physics.add.overlap(
-      this.mouse,
-      this.coffee,
-      this.handleCoffeeCollect,
-      undefined,
-      this
-    );
-    // Взаимодействие мыши и X2
-    this.physics.add.overlap(
-      this.mouse,
-      this.x2,
-      this.handleX2Collect,
-      undefined,
-      this
-    );
-    // Взаимодействие мыши и перерыва
-    this.physics.add.overlap(
-      this.mouse,
-      this.break,
-      this.handleBreakCollect,
-      undefined,
-      this
-    );
-    // Взаимодействие мыши и неуязвимости
-    this.physics.add.overlap(
-      this.mouse,
-      this.invincibility,
-      this.handleInvincibilityCollect,
-      undefined,
-      this
-    );
-    // Взаимодействие мыши и ментора
-    this.physics.add.overlap(
-      this.mouse,
-      this.mentor,
-      this.handleMentorCollect,
-      undefined,
-      this
-    );
   }
 
   // Отрабатывает на каждый тик
@@ -243,37 +235,13 @@ export default class Game extends Phaser.Scene {
     }
 
     this.moveBackground();
-    this.despawnCoinOffScreen();
+    // this.despawnCoinOffScreen();
     this.despawnDebuffOffScreen();
-    this.respawnCoffee();
-    this.respawnX2();
-    this.respawnBreak();
-    this.respawnInvincibility();
-    this.respawnMentor();
-    // this.respawnLaser();
-
-    // this.mouseGoHomeAfterTime(17, 55);
+    this.respawnBuffs();
 
     // Мышь умерла - пошли на конечную сцену
-    if (this.mouse.playerState === PlayerState.Dead) {
+    if (this.player.playerState === PlayerState.Dead) {
       this.scene.run(SCENES.end, { score: this.score });
-    }
-  }
-
-  /**
-   * Мышка уходит из игры после установленного времени
-   * @param hours
-   * @param minutes
-   * @param seconds
-   */
-  mouseGoHomeAfterTime(hours = 0, minutes = 0, seconds = 0) {
-    const now = new Date();
-    const _hours = now.getHours();
-    const _minutes = now.getMinutes();
-    const _seconds = now.getSeconds();
-
-    if (_hours >= hours && _minutes >= minutes && _seconds >= seconds) {
-      this.cameras.main.stopFollow();
     }
   }
 
@@ -281,17 +249,14 @@ export default class Game extends Phaser.Scene {
    * Рисует фон
    */
   drawBackground(): void {
-    this.background = this.add
-      .tileSprite(
-        0,
-        0,
-        this.scale.width * 2,
-        this.scale.height * 2,
-        ASSETS.bg.key
-      )
+    const bgSprite = this.add.tileSprite(0, 0, 0, 0, ASSETS.bg.key);
+
+    const scaleY = this.cameras.main.height / bgSprite.height;
+
+    this.background = bgSprite
       .setOrigin(0, 0)
       .setScrollFactor(0, 0)
-      .setScale(0.5);
+      .setScale(scaleY);
   }
 
   /**
@@ -391,7 +356,7 @@ export default class Game extends Phaser.Scene {
    * Обновляет счет со временем
    */
   updateScoreByTime(): void {
-    if (this.mouse.playerState === PlayerState.Running) {
+    if (this.player.playerState === PlayerState.Running) {
       this.score += this.salary * this.salaryMultiplier;
       this.updateScoreLabel();
     }
@@ -405,7 +370,7 @@ export default class Game extends Phaser.Scene {
 
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
 
-    // Стартовая координата спавна монеток
+    // Стартовая координата спавна неприятности
     let x = rightEdge + 100;
 
     // Рандомное количество дебаффов
@@ -419,6 +384,8 @@ export default class Game extends Phaser.Scene {
       "debuffTestFailed",
     ];
 
+    const debuffScale = 0.75;
+
     for (let i = 0; i < numDebuffs; i++) {
       const randomAssetIndex = Math.floor(Math.random() * debuffsAssets.length);
       const randomAssetKey = debuffsAssets[randomAssetIndex];
@@ -426,11 +393,14 @@ export default class Game extends Phaser.Scene {
       const debuff = this.debuffs
         .get(
           x,
-          Phaser.Math.Between(100, this.scale.height - 100),
+          this.scale.height - this.worldBoundBottom,
           // @ts-ignore
           ASSETS[randomAssetKey].key
         )
-        .setScale(0.75) as Phaser.Physics.Arcade.Sprite;
+        .setScale(debuffScale) as Phaser.Physics.Arcade.Sprite;
+
+      // Тк центр неприятности в центре, сдвигаем ее повыше чтоб как бы стояла на полу
+      debuff.y -= (debuff.height * debuffScale) / 2;
 
       // make sure coin is active and visible
       debuff.setVisible(true);
@@ -444,7 +414,7 @@ export default class Game extends Phaser.Scene {
       body.updateFromGameObject();
 
       // move x a random amount
-      x += debuff.width * 1.5;
+      x += debuff.width * Phaser.Math.Between(3, 5);
     }
   }
 
@@ -458,6 +428,12 @@ export default class Game extends Phaser.Scene {
       const debuff = child as Phaser.Physics.Arcade.Sprite;
       if (debuff.x + debuff.width / 2 < leftEdge) {
         this.debuffs.remove(child);
+
+        // Когда все неприятности уйдут с экрана, спавним их снова
+        const debuffsOnScreenCount = this.debuffs.children.getArray().length;
+        if (debuffsOnScreenCount === 0 && !this.isMentor) {
+          this.spawnDebuffs();
+        }
       }
     });
   }
@@ -477,69 +453,18 @@ export default class Game extends Phaser.Scene {
   /**
    * Рисует Мышь
    */
-  drawMouse(): void {
+  drawPlayer(): void {
     // Спрайт мыши
-    this.mouse = new Player(
+    this.player = new Player(
       this,
       this.scale.width / 4,
       this.scale.height - this.worldBoundBottom
     );
-    this.add.existing(this.mouse);
+    this.add.existing(this.player);
 
     // Столкновение мыши с границами мира
     //@ts-ignore
-    this.mouse.body.setCollideWorldBounds(true);
-  }
-
-  /**
-   * Рисует лазер
-   */
-  drawLaser(): void {
-    // Спрайт лазера
-    this.laser = new Laser(
-      this,
-      this.scale.width - 200,
-      this.scale.height / 2 - 100
-    );
-    this.add.existing(this.laser);
-  }
-
-  respawnLaser(): void {
-    if (this.isMentor) return;
-
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-
-    const body = this.laser.body as Phaser.Physics.Arcade.StaticBody;
-
-    if (this.laser.x + body.width / 2 < leftEdge) {
-      this.laser.x = Phaser.Math.Between(
-        rightEdge + body.width / 2,
-        rightEdge + 100
-      );
-      this.laser.y = Phaser.Math.Between(10, 300);
-
-      body.position.x = this.laser.x + body.offset.x;
-      body.position.y = this.laser.y + 15;
-    }
-  }
-
-  /**
-   * Удаляет лазер с экрана
-   */
-  despawnLaser(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    this.laser.x = leftEdge - 100;
-    const body = this.laser.body as Phaser.Physics.Arcade.StaticBody;
-    body.position.x = this.laser.x + body.offset.x;
-  }
-
-  /**
-   * Столкновение с лазером
-   */
-  handleLaserCrash(laser: Laser, mouse: Player): void {
-    if (mouse.isInvincible) return;
-
-    mouse.kill();
+    this.player.body.setCollideWorldBounds(true);
   }
 
   /**
@@ -555,17 +480,137 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
+   * Создает объект баффа
+   *
+   * @param buff - имя объекта
+   * @param key - идентификатор баффа
+   */
+  initBuff(buff: string) {
+    // @ts-ignore
+    const { xFrom, xTo } = overlapEntities.find((e) => e.name === buff);
+
+    // @ts-ignore
+    this[buff] = this.physics.add
+      .staticImage(
+        Phaser.Math.Between(this.scale.width * xFrom, this.scale.width * xTo),
+        this.scale.height / 2,
+        buff
+      )
+      .setScale(0.5);
+
+    // @ts-ignore
+    const buffBody = this[buff] as Phaser.Physics.Arcade.StaticBody;
+    buffBody.setCircle(buffBody.width * 0.25);
+    buffBody.setOffset(buffBody.width / 2, buffBody.height / 2);
+
+    this.spawnBuff(buff);
+  }
+
+  /**
+   * Перемещает бафф, респавнит его
+   *
+   * @param buff - имя объекта
+   */
+  spawnBuff(buff: string) {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    // @ts-ignore
+    const { xFrom, xTo } = overlapEntities.find((e) => e.name === buff);
+
+    // @ts-ignore
+    const buffBody = this[buff].body as Phaser.Physics.Arcade.StaticBody;
+
+    const x = Phaser.Math.Between(
+      rightEdge + this.scale.width * xFrom,
+      rightEdge + this.scale.width * xTo
+    );
+    const y = Phaser.Math.Between(
+      buffBody.height / 2,
+      this.scale.height - this.worldBoundBottom - buffBody.height / 2 - 100
+    );
+
+    //@ts-ignore
+    this[buff].x = x;
+    //@ts-ignore
+    this[buff].y = y;
+
+    buffBody.updateFromGameObject();
+
+    this.preventOverlap(buff);
+  }
+
+  /**
+   * Если заспавненный бафф пересекает другой бафф, переспавнивает его
+   *
+   * @param buff
+   */
+  preventOverlap(buff: string) {
+    overlapEntities.forEach((entity) => {
+      const entityName = entity.name;
+
+      // @ts-ignore
+      if (buff === entityName || !this[buff] || !this[entityName]) return;
+      // @ts-ignore
+      const boundsA = this[buff].getBounds();
+      // @ts-ignore
+      const boundsB = this[entityName].getBounds();
+      const overlap = Phaser.Geom.Intersects.RectangleToRectangle(
+        boundsA,
+        boundsB
+      );
+
+      if (overlap) {
+        this.spawnBuff(buff);
+      }
+    });
+  }
+
+  /**
+   * Респавнит бафф, если он вышел за пределы видимости
+   *
+   * @param buff - имя объекта
+   */
+  respawnBuff(buff: string) {
+    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    // @ts-ignore
+    if (this[buff].x + this[buff].width < leftEdge) {
+      this.spawnBuff(buff);
+    }
+  }
+
+  /**
+   * Создает все баффы
+   */
+  initBuffs() {
+    this.initBuff(ASSETS.buffCoffee.key);
+    this.initBuff(ASSETS.buffX2.key);
+    this.initBuff(ASSETS.buffBreak.key);
+    this.initBuff(ASSETS.buffPvs.key);
+    this.initBuff(ASSETS.buffMentor.key);
+  }
+
+  /**
+   * Проверяет не скрылись ли баффы с экрана и если да то перемещает их вперед
+   */
+  respawnBuffs() {
+    this.respawnBuff(ASSETS.buffCoffee.key);
+    this.respawnBuff(ASSETS.buffX2.key);
+    this.respawnBuff(ASSETS.buffBreak.key);
+    this.respawnBuff(ASSETS.buffPvs.key);
+    this.respawnBuff(ASSETS.buffMentor.key);
+  }
+
+  /**
    * Инициализация кофе
    */
   initCoffee(): void {
-    this.coffee = this.physics.add
+    this.buffCoffee = this.physics.add
       .staticImage(
-        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        Phaser.Math.Between(this.scale.width * 2, this.scale.width * 6),
         this.scale.height / 2,
         ASSETS.buffCoffee.key
       )
       .setScale(0.5);
-    const coffeeBody = this.coffee.body as Phaser.Physics.Arcade.StaticBody;
+    const coffeeBody = this.buffCoffee.body as Phaser.Physics.Arcade.StaticBody;
     coffeeBody.setCircle(coffeeBody.width * 0.25);
     coffeeBody.setOffset(coffeeBody.width / 2, coffeeBody.height / 2);
   }
@@ -576,16 +621,19 @@ export default class Game extends Phaser.Scene {
   spawnCoffee(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
 
-    const coffeeBody = this.coffee.body as Phaser.Physics.Arcade.StaticBody;
+    const coffeeBody = this.buffCoffee.body as Phaser.Physics.Arcade.StaticBody;
 
     const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 2,
-      rightEdge + this.scale.width * 6
+      rightEdge + this.scale.width * 0,
+      rightEdge + this.scale.width * 1
     );
-    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+    const y = Phaser.Math.Between(
+      coffeeBody.height / 2,
+      this.scale.height - this.worldBoundBottom - coffeeBody.height / 2
+    );
 
-    this.coffee.x = x;
-    this.coffee.y = y;
+    this.buffCoffee.x = x;
+    this.buffCoffee.y = y;
 
     coffeeBody.updateFromGameObject();
   }
@@ -595,7 +643,7 @@ export default class Game extends Phaser.Scene {
    */
   respawnCoffee(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.coffee.x + this.coffee.width < leftEdge) {
+    if (this.buffCoffee?.x + this.buffCoffee?.width < leftEdge) {
       this.spawnCoffee();
     }
   }
@@ -604,7 +652,7 @@ export default class Game extends Phaser.Scene {
    * Хэндлер сбора кофе
    */
   handleCoffeeCollect(): void {
-    this.mouse.slowdownMouseByCoffee();
+    this.player.slowdownPlayerByCoffee();
     this.spawnCoffee();
   }
 
@@ -612,14 +660,14 @@ export default class Game extends Phaser.Scene {
    * Инициализация x2
    */
   initX2(): void {
-    this.x2 = this.physics.add
+    this.buffX2 = this.physics.add
       .staticImage(
-        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        Phaser.Math.Between(this.scale.width * 4, this.scale.width * 8),
         this.scale.height / 2,
         ASSETS.buffX2.key
       )
       .setScale(0.5);
-    const x2Body = this.x2.body as Phaser.Physics.Arcade.StaticBody;
+    const x2Body = this.buffX2.body as Phaser.Physics.Arcade.StaticBody;
     x2Body.setCircle(x2Body.width * 0.25);
     x2Body.setOffset(x2Body.width / 2, x2Body.height / 2);
   }
@@ -630,16 +678,19 @@ export default class Game extends Phaser.Scene {
   spawnX2(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
 
-    const x2Body = this.x2.body as Phaser.Physics.Arcade.StaticBody;
+    const x2Body = this.buffX2.body as Phaser.Physics.Arcade.StaticBody;
 
     const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 2,
-      rightEdge + this.scale.width * 6
+      rightEdge + this.scale.width * 4,
+      rightEdge + this.scale.width * 8
     );
-    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+    const y = Phaser.Math.Between(
+      x2Body.height / 2,
+      this.scale.height - this.worldBoundBottom - x2Body.height / 2
+    );
 
-    this.x2.x = x;
-    this.x2.y = y;
+    this.buffX2.x = x;
+    this.buffX2.y = y;
 
     x2Body.updateFromGameObject();
   }
@@ -649,7 +700,7 @@ export default class Game extends Phaser.Scene {
    */
   respawnX2(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.x2.x + this.x2.width < leftEdge) {
+    if (this.buffX2?.x + this.buffX2?.width < leftEdge) {
       this.spawnX2();
     }
   }
@@ -668,14 +719,14 @@ export default class Game extends Phaser.Scene {
    * Инициализация перерыва
    */
   initBreak(): void {
-    this.break = this.physics.add
+    this.buffBreak = this.physics.add
       .staticImage(
         Phaser.Math.Between(this.scale.width * 2, this.scale.width * 6),
         this.scale.height / 2,
         ASSETS.buffBreak.key
       )
       .setScale(0.5);
-    const breakBody = this.break.body as Phaser.Physics.Arcade.StaticBody;
+    const breakBody = this.buffBreak.body as Phaser.Physics.Arcade.StaticBody;
     breakBody.setCircle(breakBody.width * 0.25);
     breakBody.setOffset(breakBody.width / 2, breakBody.height / 2);
   }
@@ -686,16 +737,19 @@ export default class Game extends Phaser.Scene {
   spawnBreak(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
 
-    const breakBody = this.break.body as Phaser.Physics.Arcade.StaticBody;
+    const breakBody = this.buffBreak.body as Phaser.Physics.Arcade.StaticBody;
 
     const x = Phaser.Math.Between(
       rightEdge + this.scale.width * 2,
       rightEdge + this.scale.width * 6
     );
-    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+    const y = Phaser.Math.Between(
+      breakBody.height / 2,
+      this.scale.height - this.worldBoundBottom - breakBody.height / 2
+    );
 
-    this.break.x = x;
-    this.break.y = y;
+    this.buffBreak.x = x;
+    this.buffBreak.y = y;
 
     breakBody.updateFromGameObject();
   }
@@ -705,7 +759,7 @@ export default class Game extends Phaser.Scene {
    */
   respawnBreak(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.break.x + this.break.width < leftEdge) {
+    if (this.buffBreak?.x + this.buffBreak?.width < leftEdge) {
       this.spawnBreak();
     }
   }
@@ -714,7 +768,7 @@ export default class Game extends Phaser.Scene {
    * Хэндлер сбора x2
    */
   handleBreakCollect(): void {
-    this.mouse.stopMouseByBreak();
+    this.player.stopMouseByBreak();
     this.spawnBreak();
   }
 
@@ -722,14 +776,14 @@ export default class Game extends Phaser.Scene {
    * Инициализация неуязвимости
    */
   initInvincibility(): void {
-    this.invincibility = this.physics.add
+    this.buffPvs = this.physics.add
       .staticImage(
-        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        Phaser.Math.Between(this.scale.width * 4, this.scale.width * 12),
         this.scale.height / 2,
         ASSETS.buffPvs.key
       )
       .setScale(0.5);
-    const invincibilityBody = this.invincibility
+    const invincibilityBody = this.buffPvs
       .body as Phaser.Physics.Arcade.StaticBody;
     invincibilityBody.setCircle(invincibilityBody.width * 0.25);
     invincibilityBody.setOffset(
@@ -744,17 +798,20 @@ export default class Game extends Phaser.Scene {
   spawnInvincibility(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
 
-    const invincibilityBody = this.invincibility
+    const invincibilityBody = this.buffPvs
       .body as Phaser.Physics.Arcade.StaticBody;
 
     const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 2,
-      rightEdge + this.scale.width * 6
+      rightEdge + this.scale.width * 4,
+      rightEdge + this.scale.width * 12
     );
-    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+    const y = Phaser.Math.Between(
+      invincibilityBody.height,
+      this.scale.height - this.worldBoundBottom - invincibilityBody.height
+    );
 
-    this.invincibility.x = x;
-    this.invincibility.y = y;
+    this.buffPvs.x = x;
+    this.buffPvs.y = y;
 
     invincibilityBody.updateFromGameObject();
   }
@@ -764,7 +821,7 @@ export default class Game extends Phaser.Scene {
    */
   respawnInvincibility(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.invincibility.x + this.invincibility.width < leftEdge) {
+    if (this.buffPvs?.x + this.buffPvs?.width < leftEdge) {
       this.spawnInvincibility();
     }
   }
@@ -774,12 +831,12 @@ export default class Game extends Phaser.Scene {
    */
   handleInvincibilityCollect(): void {
     this.spawnInvincibility();
-    this.mouse.isInvincible = true;
+    this.player.isInvincible = true;
 
     this.updateInvincibilityLabel();
 
     setTimeout(() => {
-      this.mouse.isInvincible = false;
+      this.player.isInvincible = false;
 
       this.updateInvincibilityLabel();
     }, 10000);
@@ -796,7 +853,7 @@ export default class Game extends Phaser.Scene {
    * Обновляет сообщения об неуязвимости
    */
   updateInvincibilityLabel(): void {
-    const text = this.mouse.isInvincible ? "Неуязвимость!" : "";
+    const text = this.player.isInvincible ? "Неуязвимость!" : "";
     this.invincibilityLabel.text = text;
   }
 
@@ -804,14 +861,14 @@ export default class Game extends Phaser.Scene {
    * Инициализация ментора
    */
   initMentor(): void {
-    this.mentor = this.physics.add
+    this.buffMentor = this.physics.add
       .staticImage(
-        Phaser.Math.Between(this.scale.width, this.scale.width * 2),
+        Phaser.Math.Between(this.scale.width * 8, this.scale.width * 12),
         this.scale.height / 2,
         ASSETS.buffMentor.key
       )
       .setScale(0.5);
-    const mentorBody = this.mentor.body as Phaser.Physics.Arcade.StaticBody;
+    const mentorBody = this.buffMentor.body as Phaser.Physics.Arcade.StaticBody;
     mentorBody.setCircle(mentorBody.width * 0.25);
     mentorBody.setOffset(mentorBody.width / 2, mentorBody.height / 2);
   }
@@ -822,16 +879,19 @@ export default class Game extends Phaser.Scene {
   spawnMentor(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
 
-    const mentorBody = this.mentor.body as Phaser.Physics.Arcade.StaticBody;
+    const mentorBody = this.buffMentor.body as Phaser.Physics.Arcade.StaticBody;
 
     const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 2,
-      rightEdge + this.scale.width * 6
+      rightEdge + this.scale.width * 8,
+      rightEdge + this.scale.width * 12
     );
-    const y = Phaser.Math.Between(0, this.scale.height - this.worldBoundBottom);
+    const y = Phaser.Math.Between(
+      mentorBody.height,
+      this.scale.height - this.worldBoundBottom - mentorBody.height
+    );
 
-    this.mentor.x = x;
-    this.mentor.y = y;
+    this.buffMentor.x = x;
+    this.buffMentor.y = y;
 
     mentorBody.updateFromGameObject();
   }
@@ -841,7 +901,7 @@ export default class Game extends Phaser.Scene {
    */
   respawnMentor(): void {
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.mentor.x + this.mentor.width < leftEdge) {
+    if (this.buffMentor?.x + this.buffMentor?.width < leftEdge) {
       this.spawnMentor();
     }
   }
@@ -859,6 +919,7 @@ export default class Game extends Phaser.Scene {
       this.isMentor = false;
 
       this.updateMentorLabel();
+      this.spawnDebuffs();
     }, 10000);
   }
 
@@ -895,7 +956,7 @@ export default class Game extends Phaser.Scene {
    * Камера движется за мышью
    */
   setCamera(): void {
-    this.cameras.main.startFollow(this.mouse);
+    this.cameras.main.startFollow(this.player);
     this.cameras.main.followOffset = this.cameraFollowOffset;
     // Не дает камере покинуть пределы экрана
     this.cameras.main.setBounds(
@@ -907,7 +968,7 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Возвращает координаты левого и правого края игры
+   * Возвращает координаты левого и правого края экрана игры
    * @return IGameEdgesCoordinates - координаты левого и правого края игры
    */
   getGameEdgesCoordinates(): IGameEdgesCoordinates {

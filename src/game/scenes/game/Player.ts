@@ -51,12 +51,13 @@ export default class Player extends Phaser.GameObjects.Container {
   /**
    * Ускорение мыши наверх
    */
-  accelerationY = -3500;
+  accelerationY = -4000;
 
   /**
    * Скорость мыши
    */
-  mouseSpeed = 200;
+  // TODO 200
+  playerSpeed = 50;
 
   /**
    * На сколько мышь ускоряется спустя время
@@ -91,15 +92,28 @@ export default class Player extends Phaser.GameObjects.Container {
       case PlayerState.Running: {
         // Если нажат пробел
         if (this.cursors.space?.isDown && !this.isFalling) {
-          body.setAccelerationY(this.accelerationY);
+          if (body.blocked.up) {
+            this.isFalling = true;
+            break;
+          }
+
+          // TODO убрать после дебага
+          body.setVelocityX(500);
+
+          // body.setAccelerationY(this.accelerationY);
           this.toggleJetpack(true);
 
           // Анимация полета
           this.player.play(ASSETS.player.animations.fly, true);
+
+          // Если не летим вверх
         } else {
+          // TODO убрать после дебага
+          body.setVelocityX(0);
           body.setAccelerationY(0);
           this.toggleJetpack(false);
 
+          // Если стоим на земле
           if (body.blocked.down) {
             // Дефолтная анимация бега
             this.player.play(ASSETS.player.animations.run, true);
@@ -140,23 +154,28 @@ export default class Player extends Phaser.GameObjects.Container {
    * @param scene
    */
   initPlayer(scene: Phaser.Scene): void {
+    const scale = 0.5;
     // Мышь
     this.player = scene.add
       .sprite(0, 0, ASSETS.player.key)
       .setOrigin(0.5, 1)
-      .play(ASSETS.player.animations.run);
+      .play(ASSETS.player.animations.run)
+      .setScale(scale);
 
     // Добавляет объект к контейнеру
     this.add(this.player);
 
-    // Сопоставляем физическое тело мыши и спрайт
+    // Сопоставляем физическое тело игрока и спрайт
     const body = this.body as Phaser.Physics.Arcade.Body;
     // Коэффициенты честно подобраны рандомно, никакой логики
-    body.setSize(this.player.width * 0.7, this.player.height * 0.8);
-    body.setOffset(-this.player.width * 0.45, -this.player.height * 0.95);
+    body.setSize(this.player.width * 0.35, this.player.height * 0.4);
+    body.setOffset(
+      (-this.player.width * scale) / 2 + 20,
+      -this.player.height * scale + 20
+    );
 
     // Даем мыши скорость
-    body.setVelocityX(this.mouseSpeed);
+    body.setVelocityX(this.playerSpeed);
   }
 
   /**
@@ -165,8 +184,9 @@ export default class Player extends Phaser.GameObjects.Container {
    */
   initFlames(scene: Phaser.Scene): void {
     this.flames = scene.add
-      .sprite(-22, -11, ASSETS.player.key)
-      .play(ASSETS.player.animations.flamesOn);
+      .sprite(-31, -15, ASSETS.player.key)
+      .play(ASSETS.player.animations.flamesOn)
+      .setScale(0.5);
     this.add(this.flames);
   }
 
@@ -190,6 +210,8 @@ export default class Player extends Phaser.GameObjects.Container {
    * Убивает мышь.
    */
   kill() {
+    return;
+
     if (this.playerState !== PlayerState.Running) {
       return;
     }
@@ -199,7 +221,6 @@ export default class Player extends Phaser.GameObjects.Container {
     this.player.play(ASSETS.player.animations.death);
 
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setAccelerationY(0);
     body.setVelocityX(1000);
     this.toggleJetpack(false);
   }
@@ -208,7 +229,10 @@ export default class Player extends Phaser.GameObjects.Container {
    * Ускоряет мышь спустя какое-то время
    */
   speedUpPlayerByTime(time: number): void {
-    if (this.mouseSpeed === 0) {
+    //TODO убрать после дебага
+    return;
+
+    if (this.playerSpeed === 0) {
       return;
     }
     const body = this.body as Phaser.Physics.Arcade.Body;
@@ -218,39 +242,39 @@ export default class Player extends Phaser.GameObjects.Container {
     if (currentSecond - this.seconds >= this.deltaSeconds) {
       this.seconds = currentSecond;
 
-      this.mouseSpeed += this.deltaSpeed;
-      body.setVelocityX(this.mouseSpeed);
+      this.playerSpeed += this.deltaSpeed;
+      body.setVelocityX(this.playerSpeed);
     }
   }
 
   /**
    * Замедляет мышь на время
    */
-  slowdownMouseByCoffee(): void {
+  slowdownPlayerByCoffee(): void {
     const body = this.body as Phaser.Physics.Arcade.Body;
 
-    const prevSpeed = this.mouseSpeed;
+    const prevSpeed = this.playerSpeed;
 
-    this.mouseSpeed = prevSpeed * 0.5;
-    body.setVelocityX(this.mouseSpeed);
+    this.playerSpeed = prevSpeed * 0.5;
+    body.setVelocityX(this.playerSpeed);
 
     setTimeout(() => {
-      this.mouseSpeed = prevSpeed;
-      body.setVelocityX(this.mouseSpeed);
+      this.playerSpeed = prevSpeed;
+      body.setVelocityX(this.playerSpeed);
     }, this.coffeeTime);
   }
 
   stopMouseByBreak(): void {
     const body = this.body as Phaser.Physics.Arcade.Body;
 
-    const prevSpeed = this.mouseSpeed;
+    const prevSpeed = this.playerSpeed;
 
-    this.mouseSpeed = 0;
-    body.setVelocityX(this.mouseSpeed);
+    this.playerSpeed = 0;
+    body.setVelocityX(this.playerSpeed);
 
     setTimeout(() => {
-      this.mouseSpeed = prevSpeed;
-      body.setVelocityX(this.mouseSpeed);
+      this.playerSpeed = prevSpeed;
+      body.setVelocityX(this.playerSpeed);
     }, this.breakTime);
   }
 }
