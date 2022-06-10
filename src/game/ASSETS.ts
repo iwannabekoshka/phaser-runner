@@ -35,7 +35,12 @@ const ASSETS = {
   },
   buffBreak: {
     key: "buffBreak",
-    imageUrl: "/game/office/buffs/donut.png",
+    imageUrl: "/game/office/buffs/donut/donut2.png",
+    dataFileUrl: "/game/office/buffs/donut/donut2.json",
+    animations: {
+      idle: "animationBuffBreakIdle",
+      pop: "animationBuffBreakPop",
+    },
   },
   buffPvs: {
     key: "buffPvs",
@@ -64,6 +69,33 @@ const ASSETS = {
   debuffTestFailed: {
     key: "debuffTestFailed",
     imageUrl: "/game/office/debuffs/test_failed.png",
+  },
+  fontArcade: {
+    key: "fontArcade",
+    imageUrl: "/game/fonts/arcade/arcade.png",
+    dataFileUrl: "/game/fonts/arcade/arcade.xml",
+  },
+  fontDoubleShadowed: {
+    key: "fontDoubleShadowed",
+    imageUrl: "/game/fonts/double_shadowed/double_shadowed_2.png",
+    dataFileUrl: "/game/fonts/double_shadowed/double_shadowed_2.xml",
+  },
+  fontLifeIsStrangeDark: {
+    key: "fontLifeIsStrangeDark",
+    imageUrl: "/game/fonts/lifeisstrange_dark/lifeisstrange_dark.png",
+    dataFileUrl: "/game/fonts/lifeisstrange_dark/lifeisstrange_dark.xml",
+  },
+  fontPribambasWhiteShadowed: {
+    key: "fontPribambasWhiteShadowed",
+    imageUrl:
+      "/game/fonts/pribambas_white_shadowed/pribambas_white_shadowed.png",
+    dataFileUrl:
+      "/game/fonts/pribambas_white_shadowed/pribambas_white_shadowed.xml",
+  },
+  fontPribambasBlack: {
+    key: "fontPribambasBlack",
+    imageUrl: "/game/fonts/pribambas_black/pribambas_black.png",
+    dataFileUrl: "/game/fonts/pribambas_black/pribambas_black.xml",
   },
 };
 

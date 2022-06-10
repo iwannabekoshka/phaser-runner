@@ -3,14 +3,10 @@ import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import { IGameEdgesCoordinates } from "../../interfaces/IGameEdgesCoordinates";
 import Player, { PlayerState } from "./Player";
-import Laser from "./Laser";
+import { log } from "util";
+import BitmapText = Phaser.GameObjects.BitmapText;
 
 const overlapEntities = [
-  {
-    name: ASSETS.buffCoffee.key,
-    xFrom: 0,
-    xTo: 1,
-  },
   {
     name: ASSETS.buffX2.key,
     xFrom: 0,
@@ -28,6 +24,11 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffMentor.key,
+    xFrom: 0,
+    xTo: 1,
+  },
+  {
+    name: ASSETS.coin.key,
     xFrom: 0,
     xTo: 1,
   },
@@ -49,11 +50,11 @@ export default class Game extends Phaser.Scene {
   /**
    * Группа монеток
    */
-  coins!: Phaser.Physics.Arcade.StaticGroup;
+  coin!: Phaser.GameObjects.Image;
   /**
    * Группа неприятностей
    */
-  debuffs!: Phaser.Physics.Arcade.StaticGroup;
+  debuffs!: Phaser.Physics.Arcade.Group;
   /**
    * Бафф кофе
    */
@@ -101,7 +102,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Текст счета
    */
-  scoreLabel!: Phaser.GameObjects.Text;
+  scoreLabel!: BitmapText;
   /**
    * Секунды для начисления очков
    */
@@ -117,14 +118,17 @@ export default class Game extends Phaser.Scene {
   /** Минимальное расстояние между ништяками */
   overlapMargin = 2;
 
+  // TODO тестовый спрайтовый бафф
+  buffDonutTest!: Phaser.Physics.Arcade.Sprite;
+  testLabel!: BitmapText;
+
   // Тут можно задавать дефолтные значения
   init() {
     // Обнуляем счет в начале игры
     this.score = 0;
     this.salaryMultiplier = 1;
 
-    this.coins = this.physics.add.staticGroup();
-    this.debuffs = this.physics.add.staticGroup();
+    this.debuffs = this.physics.add.group();
   }
 
   // Создание всего и вся
@@ -133,7 +137,6 @@ export default class Game extends Phaser.Scene {
 
     this.drawBackground();
 
-    // this.spawnCoins();
     this.spawnDebuffs();
     this.initBuffs();
 
@@ -145,64 +148,87 @@ export default class Game extends Phaser.Scene {
 
     this.setCamera();
 
+    // region Donut test
+    this.buffDonutTest = this.physics.add
+      .sprite(250, 100, ASSETS.buffBreak.key)
+      .setOrigin(0.5, 0.5)
+      .play(ASSETS.buffBreak.animations.idle)
+      .setScale(0.5)
+      .setDepth(0);
+    const body = this.buffDonutTest.body as Phaser.Physics.Arcade.Body;
+    body
+      .setCircle(body.width * 0.5)
+      .setOffset(0, 0)
+      .setAllowGravity(false);
+
+    this.physics.add.overlap(
+      this.player,
+      this.buffDonutTest,
+      //@ts-ignore
+      this.handleBuffBreakTestCollect,
+      undefined,
+      true
+    );
+    // endregion Donut test
+
     //region Collisions
     // Взаимодействие мыши и неприятностей
-    // this.physics.add.overlap(
-    //   this.player,
-    //   this.debuffs,
-    //   //@ts-ignore
-    //   this.handleMouseCrash,
-    //   undefined,
-    //   true
-    // );
-    // // Взаимодействие мыши и монеток
-    // this.physics.add.overlap(
-    //   this.player,
-    //   this.coins,
-    //   this.handleCoinCollect,
-    //   undefined,
-    //   this
-    // );
-    // // Взаимодействие мыши и кофе
-    // this.physics.add.overlap(
-    //   this.player,
-    //   this.coffee,
-    //   this.handleCoffeeCollect,
-    //   undefined,
-    //   this
-    // );
-    // // Взаимодействие мыши и X2
-    // this.physics.add.overlap(
-    //   this.player,
-    //   this.x2,
-    //   this.handleX2Collect,
-    //   undefined,
-    //   this
-    // );
-    // // Взаимодействие мыши и перерыва
-    // this.physics.add.overlap(
-    //   this.player,
-    //   this.break,
-    //   this.handleBreakCollect,
-    //   undefined,
-    //   this
-    // );
-    // // Взаимодействие мыши и неуязвимости
-    // this.physics.add.overlap(
-    //   this.player,
-    //   this.invincibility,
-    //   this.handleInvincibilityCollect,
-    //   undefined,
-    //   this
-    // );
-    // // Взаимодействие мыши и ментора
-    // this.physics.add.overlap(
-    //   this.player,
-    //   this.mentor,
-    //   this.handleMentorCollect,
-    //   undefined,
-    //   this
-    // );
+    this.physics.add.overlap(
+      this.player,
+      this.debuffs,
+      //@ts-ignore
+      this.handleMouseCrash,
+      undefined,
+      true
+    );
+    // Взаимодействие мыши и монеток
+    this.physics.add.overlap(
+      this.player,
+      this.coin,
+      this.handleCoinCollect,
+      undefined,
+      this
+    );
+    // Взаимодействие мыши и кофе
+    this.physics.add.overlap(
+      this.player,
+      this.buffCoffee,
+      this.handleCoffeeCollect,
+      undefined,
+      this
+    );
+    // Взаимодействие мыши и X2
+    this.physics.add.overlap(
+      this.player,
+      this.buffX2,
+      this.handleX2Collect,
+      undefined,
+      this
+    );
+    // Взаимодействие мыши и перерыва
+    this.physics.add.overlap(
+      this.player,
+      this.buffBreak,
+      this.handleBreakCollect,
+      undefined,
+      this
+    );
+    // Взаимодействие мыши и неуязвимости
+    this.physics.add.overlap(
+      this.player,
+      this.buffPvs,
+      this.handleInvincibilityCollect,
+      undefined,
+      this
+    );
+    // Взаимодействие мыши и ментора
+    this.physics.add.overlap(
+      this.player,
+      this.buffMentor,
+      this.handleMentorCollect,
+      undefined,
+      this
+    );
     //endregion Collisions
 
     // Респавн монеток
@@ -213,12 +239,12 @@ export default class Game extends Phaser.Scene {
     //   callbackScope: this,
     // });
     // Респавн неприятностей
-    this.time.addEvent({
-      delay: 5000,
-      loop: true,
-      callback: this.spawnDebuffs,
-      callbackScope: this,
-    });
+    // this.time.addEvent({
+    //   delay: 5000,
+    //   loop: true,
+    //   callback: this.spawnDebuffs,
+    //   callbackScope: this,
+    // });
     // Начисление зп каждую секунду
     this.time.addEvent({
       delay: 1000,
@@ -235,7 +261,6 @@ export default class Game extends Phaser.Scene {
     }
 
     this.moveBackground();
-    // this.despawnCoinOffScreen();
     this.despawnDebuffOffScreen();
     this.respawnBuffs();
 
@@ -243,6 +268,16 @@ export default class Game extends Phaser.Scene {
     if (this.player.playerState === PlayerState.Dead) {
       this.scene.run(SCENES.end, { score: this.score });
     }
+  }
+
+  handleBuffBreakTestCollect(
+    player: Player,
+    buff: Phaser.Physics.Arcade.Sprite
+  ) {
+    const body = buff.body;
+
+    buff.play(ASSETS.buffBreak.animations.pop);
+    body.checkCollision.none = true;
   }
 
   /**
@@ -267,54 +302,10 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Спавнит монетки
-   */
-  spawnCoins(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-
-    // Стартовая координата спавна монеток
-    let x = rightEdge + 100;
-
-    // Рандомное количество монеток
-    const numCoins = Phaser.Math.Between(1, 10);
-
-    for (let i = 0; i < numCoins; i++) {
-      const coin = this.coins
-        .get(
-          x,
-          Phaser.Math.Between(100, this.scale.height - 100),
-          ASSETS.coin.key
-        )
-        .setScale(0.25) as Phaser.Physics.Arcade.Sprite;
-
-      // make sure coin is active and visible
-      coin.setVisible(true);
-      coin.setActive(true);
-
-      // enable and adjust physics body to be a circle
-      const body = coin.body as Phaser.Physics.Arcade.StaticBody;
-      body.setCircle(body.width * 0.5);
-      body.enable = true;
-
-      body.updateFromGameObject();
-
-      // move x a random amount
-      x += coin.width * 1.5;
-    }
-  }
-
-  /**
    * Собирание монеток
    */
-  handleCoinCollect(
-    obj1: Phaser.GameObjects.GameObject,
-    obj2: Phaser.GameObjects.GameObject
-  ): void {
-    const coin = obj2 as Phaser.Physics.Arcade.Sprite;
-
-    // При подборе монетки уничтожаем ее
-    this.coins.killAndHide(coin);
-    this.coins.remove(coin);
+  handleCoinCollect(): void {
+    this.spawnBuff(ASSETS.coin.key);
 
     // Увеличиваем счет
     this.score += 50;
@@ -323,33 +314,40 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Уничтожает монетку, если она за экраном
-   */
-  despawnCoinOffScreen() {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-
-    this.coins.children.each((child) => {
-      const coin = child as Phaser.Physics.Arcade.Sprite;
-      if (coin.x + coin.width / 2 < leftEdge) {
-        this.coins.remove(child);
-      }
-    });
-  }
-
-  /**
    * Рисует счет
    */
   drawScoreLabel(): void {
     this.scoreLabel = this.add
-      .text(10, 10, `Score: ${this.score}. Multi: x${this.salaryMultiplier}`)
+      .bitmapText(
+        10,
+        10,
+        ASSETS.fontPribambasBlack.key,
+        `СЧЕТ: ${this.score}. МУЛЬТИ: Х${this.salaryMultiplier}`,
+        36
+      )
       .setScrollFactor(0);
+
+    this.testLabel = this.add.bitmapText(
+      300,
+      0,
+      ASSETS.fontPribambasBlack.key,
+      "МАМА Я ПРИБАМБАС",
+      36
+    );
+    this.add.bitmapText(
+      300,
+      40,
+      ASSETS.fontDoubleShadowed.key,
+      "1234567890",
+      48
+    );
   }
 
   /**
    * Обновляет счет
    */
   updateScoreLabel(): void {
-    this.scoreLabel.text = `Score: ${this.score}. Multi: x${this.salaryMultiplier}`;
+    this.scoreLabel.text = `СЧЕТ: ${this.score}. МУЛЬТИ: x${this.salaryMultiplier}`;
   }
 
   /**
@@ -407,9 +405,12 @@ export default class Game extends Phaser.Scene {
       debuff.setActive(true);
 
       // enable and adjust physics body to be a circle
-      const body = debuff.body as Phaser.Physics.Arcade.StaticBody;
+      const body = debuff.body as Phaser.Physics.Arcade.Body;
       body.setCircle(body.width * 0.5);
       body.enable = true;
+      // Не нашел, как задизейблить гравитацию, так что просто
+      // даем ускорение в обратную сторону
+      body.setAccelerationY(-1800);
 
       body.updateFromGameObject();
 
@@ -465,6 +466,9 @@ export default class Game extends Phaser.Scene {
     // Столкновение мыши с границами мира
     //@ts-ignore
     this.player.body.setCollideWorldBounds(true);
+
+    // Игрок выше баффов
+    this.player.setDepth(1000);
   }
 
   /**
@@ -535,7 +539,7 @@ export default class Game extends Phaser.Scene {
 
     buffBody.updateFromGameObject();
 
-    this.preventOverlap(buff);
+    this.preventBuffOverlap(buff);
   }
 
   /**
@@ -543,7 +547,7 @@ export default class Game extends Phaser.Scene {
    *
    * @param buff
    */
-  preventOverlap(buff: string) {
+  preventBuffOverlap(buff: string) {
     overlapEntities.forEach((entity) => {
       const entityName = entity.name;
 
@@ -581,7 +585,7 @@ export default class Game extends Phaser.Scene {
    * Создает все баффы
    */
   initBuffs() {
-    this.initBuff(ASSETS.buffCoffee.key);
+    this.initBuff(ASSETS.coin.key);
     this.initBuff(ASSETS.buffX2.key);
     this.initBuff(ASSETS.buffBreak.key);
     this.initBuff(ASSETS.buffPvs.key);
@@ -592,7 +596,7 @@ export default class Game extends Phaser.Scene {
    * Проверяет не скрылись ли баффы с экрана и если да то перемещает их вперед
    */
   respawnBuffs() {
-    this.respawnBuff(ASSETS.buffCoffee.key);
+    this.respawnBuff(ASSETS.coin.key);
     this.respawnBuff(ASSETS.buffX2.key);
     this.respawnBuff(ASSETS.buffBreak.key);
     this.respawnBuff(ASSETS.buffPvs.key);
@@ -600,109 +604,11 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Инициализация кофе
-   */
-  initCoffee(): void {
-    this.buffCoffee = this.physics.add
-      .staticImage(
-        Phaser.Math.Between(this.scale.width * 2, this.scale.width * 6),
-        this.scale.height / 2,
-        ASSETS.buffCoffee.key
-      )
-      .setScale(0.5);
-    const coffeeBody = this.buffCoffee.body as Phaser.Physics.Arcade.StaticBody;
-    coffeeBody.setCircle(coffeeBody.width * 0.25);
-    coffeeBody.setOffset(coffeeBody.width / 2, coffeeBody.height / 2);
-  }
-
-  /**
-   * Спавнит кофе в рандомной точке
-   */
-  spawnCoffee(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-
-    const coffeeBody = this.buffCoffee.body as Phaser.Physics.Arcade.StaticBody;
-
-    const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 0,
-      rightEdge + this.scale.width * 1
-    );
-    const y = Phaser.Math.Between(
-      coffeeBody.height / 2,
-      this.scale.height - this.worldBoundBottom - coffeeBody.height / 2
-    );
-
-    this.buffCoffee.x = x;
-    this.buffCoffee.y = y;
-
-    coffeeBody.updateFromGameObject();
-  }
-
-  /**
-   * Респавнит кофе, если оно вылезло за экран
-   */
-  respawnCoffee(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.buffCoffee?.x + this.buffCoffee?.width < leftEdge) {
-      this.spawnCoffee();
-    }
-  }
-
-  /**
    * Хэндлер сбора кофе
    */
   handleCoffeeCollect(): void {
     this.player.slowdownPlayerByCoffee();
-    this.spawnCoffee();
-  }
-
-  /**
-   * Инициализация x2
-   */
-  initX2(): void {
-    this.buffX2 = this.physics.add
-      .staticImage(
-        Phaser.Math.Between(this.scale.width * 4, this.scale.width * 8),
-        this.scale.height / 2,
-        ASSETS.buffX2.key
-      )
-      .setScale(0.5);
-    const x2Body = this.buffX2.body as Phaser.Physics.Arcade.StaticBody;
-    x2Body.setCircle(x2Body.width * 0.25);
-    x2Body.setOffset(x2Body.width / 2, x2Body.height / 2);
-  }
-
-  /**
-   * Спавнит x2 в рандомной точке
-   */
-  spawnX2(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-
-    const x2Body = this.buffX2.body as Phaser.Physics.Arcade.StaticBody;
-
-    const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 4,
-      rightEdge + this.scale.width * 8
-    );
-    const y = Phaser.Math.Between(
-      x2Body.height / 2,
-      this.scale.height - this.worldBoundBottom - x2Body.height / 2
-    );
-
-    this.buffX2.x = x;
-    this.buffX2.y = y;
-
-    x2Body.updateFromGameObject();
-  }
-
-  /**
-   * Респавнит x2, если оно вылезло за экран
-   */
-  respawnX2(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.buffX2?.x + this.buffX2?.width < leftEdge) {
-      this.spawnX2();
-    }
+    this.spawnBuff(ASSETS.buffCoffee.key);
   }
 
   /**
@@ -711,126 +617,50 @@ export default class Game extends Phaser.Scene {
   handleX2Collect(): void {
     this.salaryMultiplier *= 2;
 
-    this.spawnX2();
+    this.spawnBuff(ASSETS.buffX2.key);
     this.updateScoreLabel();
   }
 
   /**
-   * Инициализация перерыва
+   * Хэндлер сбора пончика
    */
-  initBreak(): void {
-    this.buffBreak = this.physics.add
-      .staticImage(
-        Phaser.Math.Between(this.scale.width * 2, this.scale.width * 6),
-        this.scale.height / 2,
-        ASSETS.buffBreak.key
-      )
-      .setScale(0.5);
-    const breakBody = this.buffBreak.body as Phaser.Physics.Arcade.StaticBody;
-    breakBody.setCircle(breakBody.width * 0.25);
-    breakBody.setOffset(breakBody.width / 2, breakBody.height / 2);
-  }
+  async handleBreakCollect() {
+    this.player.isInvincible = true;
+    this.updateInvincibilityLabel();
 
-  /**
-   * Спавнит перерыв в рандомной точке
-   */
-  spawnBreak(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
+    this.player.stopPlayerByBreak().then(() => {
+      this.player.isInvincible = false;
+      this.updateInvincibilityLabel();
 
-    const breakBody = this.buffBreak.body as Phaser.Physics.Arcade.StaticBody;
+      this.debuffs.children.each((child) => {
+        const debuff = child as Phaser.Physics.Arcade.Sprite;
+        const body = debuff.body as Phaser.Physics.Arcade.Body;
 
-    const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 2,
-      rightEdge + this.scale.width * 6
-    );
-    const y = Phaser.Math.Between(
-      breakBody.height / 2,
-      this.scale.height - this.worldBoundBottom - breakBody.height / 2
-    );
+        body.setVelocityX(0);
+      });
+    });
 
-    this.buffBreak.x = x;
-    this.buffBreak.y = y;
+    this.debuffs.children.each((child) => {
+      const debuff = child as Phaser.Physics.Arcade.Sprite;
+      const body = debuff.body as Phaser.Physics.Arcade.Body;
+      const debuffX = debuff.x;
+      const playerX = this.player.x;
 
-    breakBody.updateFromGameObject();
-  }
+      if (debuffX > playerX) {
+        body.setVelocityX(100);
+      } else {
+        body.setVelocityX(-100);
+      }
+    });
 
-  /**
-   * Респавнит x2, если оно вылезло за экран
-   */
-  respawnBreak(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.buffBreak?.x + this.buffBreak?.width < leftEdge) {
-      this.spawnBreak();
-    }
-  }
-
-  /**
-   * Хэндлер сбора x2
-   */
-  handleBreakCollect(): void {
-    this.player.stopMouseByBreak();
-    this.spawnBreak();
-  }
-
-  /**
-   * Инициализация неуязвимости
-   */
-  initInvincibility(): void {
-    this.buffPvs = this.physics.add
-      .staticImage(
-        Phaser.Math.Between(this.scale.width * 4, this.scale.width * 12),
-        this.scale.height / 2,
-        ASSETS.buffPvs.key
-      )
-      .setScale(0.5);
-    const invincibilityBody = this.buffPvs
-      .body as Phaser.Physics.Arcade.StaticBody;
-    invincibilityBody.setCircle(invincibilityBody.width * 0.25);
-    invincibilityBody.setOffset(
-      invincibilityBody.width / 2,
-      invincibilityBody.height / 2
-    );
-  }
-
-  /**
-   * Спавнит неуязвимость в рандомной точке
-   */
-  spawnInvincibility(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-
-    const invincibilityBody = this.buffPvs
-      .body as Phaser.Physics.Arcade.StaticBody;
-
-    const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 4,
-      rightEdge + this.scale.width * 12
-    );
-    const y = Phaser.Math.Between(
-      invincibilityBody.height,
-      this.scale.height - this.worldBoundBottom - invincibilityBody.height
-    );
-
-    this.buffPvs.x = x;
-    this.buffPvs.y = y;
-
-    invincibilityBody.updateFromGameObject();
-  }
-
-  /**
-   * Респавнит неуязвимость, если оно вылезло за экран
-   */
-  respawnInvincibility(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.buffPvs?.x + this.buffPvs?.width < leftEdge) {
-      this.spawnInvincibility();
-    }
+    this.spawnBuff(ASSETS.buffBreak.key);
   }
 
   /**
    * Хэндлер сбора неуязвимости
    */
   handleInvincibilityCollect(): void {
-    this.spawnInvincibility();
+    this.spawnBuff(ASSETS.buffPvs.key);
     this.player.isInvincible = true;
 
     this.updateInvincibilityLabel();
@@ -858,60 +688,11 @@ export default class Game extends Phaser.Scene {
   }
 
   /**
-   * Инициализация ментора
-   */
-  initMentor(): void {
-    this.buffMentor = this.physics.add
-      .staticImage(
-        Phaser.Math.Between(this.scale.width * 8, this.scale.width * 12),
-        this.scale.height / 2,
-        ASSETS.buffMentor.key
-      )
-      .setScale(0.5);
-    const mentorBody = this.buffMentor.body as Phaser.Physics.Arcade.StaticBody;
-    mentorBody.setCircle(mentorBody.width * 0.25);
-    mentorBody.setOffset(mentorBody.width / 2, mentorBody.height / 2);
-  }
-
-  /**
-   * Спавнит ментора в рандомной точке
-   */
-  spawnMentor(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-
-    const mentorBody = this.buffMentor.body as Phaser.Physics.Arcade.StaticBody;
-
-    const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * 8,
-      rightEdge + this.scale.width * 12
-    );
-    const y = Phaser.Math.Between(
-      mentorBody.height,
-      this.scale.height - this.worldBoundBottom - mentorBody.height
-    );
-
-    this.buffMentor.x = x;
-    this.buffMentor.y = y;
-
-    mentorBody.updateFromGameObject();
-  }
-
-  /**
-   * Респавнит ментора, если оно вылезло за экран
-   */
-  respawnMentor(): void {
-    const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
-    if (this.buffMentor?.x + this.buffMentor?.width < leftEdge) {
-      this.spawnMentor();
-    }
-  }
-
-  /**
    * Хэндлер сбора ментора
    */
   handleMentorCollect(): void {
     this.isMentor = true;
-    this.spawnMentor();
+    this.spawnBuff(ASSETS.buffMentor.key);
 
     this.updateMentorLabel();
 

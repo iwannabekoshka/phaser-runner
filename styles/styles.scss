@@ -1,5 +1,10 @@
 @use './variables' as var;
 
+@font-face {
+  font-family: "lifeisstrangeru";
+  src: url('/game/fonts/lifeisstrange_dark/lifeisstrangeru.ttf');
+}
+
 *,
 *::before,
 *::after {

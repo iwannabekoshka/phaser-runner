@@ -54,10 +54,10 @@ export default class Player extends Phaser.GameObjects.Container {
   accelerationY = -4000;
 
   /**
-   * Скорость мыши
+   * Скорость игрока
    */
   // TODO 200
-  playerSpeed = 50;
+  playerSpeed = 200;
 
   /**
    * На сколько мышь ускоряется спустя время
@@ -83,7 +83,7 @@ export default class Player extends Phaser.GameObjects.Container {
   /**
    * Время перерыва
    */
-  breakTime = 10000;
+  breakTime = 5000;
 
   preUpdate(t: number, dt: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
@@ -92,15 +92,15 @@ export default class Player extends Phaser.GameObjects.Container {
       case PlayerState.Running: {
         // Если нажат пробел
         if (this.cursors.space?.isDown && !this.isFalling) {
-          if (body.blocked.up) {
+          if (body.y === 0) {
             this.isFalling = true;
             break;
           }
 
           // TODO убрать после дебага
-          body.setVelocityX(500);
+          // body.setVelocityX(500);
 
-          // body.setAccelerationY(this.accelerationY);
+          body.setAccelerationY(this.accelerationY);
           this.toggleJetpack(true);
 
           // Анимация полета
@@ -109,7 +109,7 @@ export default class Player extends Phaser.GameObjects.Container {
           // Если не летим вверх
         } else {
           // TODO убрать после дебага
-          body.setVelocityX(0);
+          // body.setVelocityX(0);
           body.setAccelerationY(0);
           this.toggleJetpack(false);
 
@@ -160,7 +160,8 @@ export default class Player extends Phaser.GameObjects.Container {
       .sprite(0, 0, ASSETS.player.key)
       .setOrigin(0.5, 1)
       .play(ASSETS.player.animations.run)
-      .setScale(scale);
+      .setScale(scale)
+      .setDepth(1000);
 
     // Добавляет объект к контейнеру
     this.add(this.player);
@@ -210,10 +211,11 @@ export default class Player extends Phaser.GameObjects.Container {
    * Убивает мышь.
    */
   kill() {
+    // TODO убрать после дебага
     return;
 
     if (this.playerState !== PlayerState.Running) {
-      return;
+      // return;
     }
 
     this.playerState = PlayerState.Killed;
@@ -264,7 +266,7 @@ export default class Player extends Phaser.GameObjects.Container {
     }, this.coffeeTime);
   }
 
-  stopMouseByBreak(): void {
+  stopPlayerByBreak() {
     const body = this.body as Phaser.Physics.Arcade.Body;
 
     const prevSpeed = this.playerSpeed;
@@ -272,9 +274,13 @@ export default class Player extends Phaser.GameObjects.Container {
     this.playerSpeed = 0;
     body.setVelocityX(this.playerSpeed);
 
-    setTimeout(() => {
-      this.playerSpeed = prevSpeed;
-      body.setVelocityX(this.playerSpeed);
-    }, this.breakTime);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.playerSpeed = prevSpeed;
+        body.setVelocityX(this.playerSpeed);
+
+        resolve(() => true);
+      }, this.breakTime);
+    });
   }
 }

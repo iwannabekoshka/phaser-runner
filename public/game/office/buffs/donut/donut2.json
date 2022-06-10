@@ -1,0 +1,52 @@
+{"frames": {
+
+"bubble-01.png":
+{
+	"frame": {"x":0,"y":0,"w":256,"h":255},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":255},
+	"sourceSize": {"w":256,"h":255}
+},
+"bubble-02.png":
+{
+	"frame": {"x":256,"y":0,"w":256,"h":255},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":255},
+	"sourceSize": {"w":256,"h":255}
+},
+"bubble-03.png":
+{
+	"frame": {"x":512,"y":0,"w":255,"h":255},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":255},
+	"sourceSize": {"w":255,"h":255}
+},
+"bubble-04.png":
+{
+	"frame": {"x":767,"y":0,"w":255,"h":255},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":255},
+	"sourceSize": {"w":255,"h":255}
+},
+"bubble-05.png":
+{
+	"frame": {"x":1022,"y":0,"w":255,"h":255},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":255},
+	"sourceSize": {"w":255,"h":255}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "donut2.png",
+	"format": "RGBA8888",
+	"size": {"w":1277,"h":255},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a73632486ac8e28971720aa8dca25844:324e7a00d4b2b08c630a4b8110c04a68:d3750e4dc3ab3f0b9494cdbcdca2c155$"
+}
+}

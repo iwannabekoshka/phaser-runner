@@ -6,8 +6,8 @@ import GameOver from "./scenes/gameOver/GameOver";
 
 export default new Phaser.Game({
   type: Phaser.CANVAS,
-  width: 800,
-  height: 640,
+  width: 1000,
+  height: 500,
   canvas: <HTMLCanvasElement>document.querySelector("#game"),
   scene: [Preloader, Menu, Game, GameOver],
   physics: {

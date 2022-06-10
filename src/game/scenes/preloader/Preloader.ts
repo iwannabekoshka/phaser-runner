@@ -24,7 +24,13 @@ export default class Preloader extends Phaser.Scene {
     // Баффы
     this.load.image(ASSETS.buffCoffee.key, ASSETS.buffCoffee.imageUrl);
     this.load.image(ASSETS.buffX2.key, ASSETS.buffX2.imageUrl);
-    this.load.image(ASSETS.buffBreak.key, ASSETS.buffBreak.imageUrl);
+    // this.load.image(ASSETS.buffBreak.key, ASSETS.buffBreak.imageUrl);
+    // Пончик
+    this.load.atlas(
+      ASSETS.buffBreak.key,
+      ASSETS.buffBreak.imageUrl,
+      ASSETS.buffBreak.dataFileUrl
+    );
     this.load.image(ASSETS.buffPvs.key, ASSETS.buffPvs.imageUrl);
     this.load.image(ASSETS.buffMentor.key, ASSETS.buffMentor.imageUrl);
 
@@ -37,17 +43,53 @@ export default class Preloader extends Phaser.Scene {
       ASSETS.debuffTestFailed.key,
       ASSETS.debuffTestFailed.imageUrl
     );
+
+    // Шрифты
+    // Arcade
+    this.load.bitmapFont(
+      ASSETS.fontArcade.key,
+      ASSETS.fontArcade.imageUrl,
+      ASSETS.fontArcade.dataFileUrl
+    );
+    // Life Is Strange Dark
+    this.load.bitmapFont(
+      ASSETS.fontLifeIsStrangeDark.key,
+      ASSETS.fontLifeIsStrangeDark.imageUrl,
+      ASSETS.fontLifeIsStrangeDark.dataFileUrl
+    );
+    // Pribambas White Shadowed
+    this.load.bitmapFont(
+      ASSETS.fontPribambasWhiteShadowed.key,
+      ASSETS.fontPribambasWhiteShadowed.imageUrl,
+      ASSETS.fontPribambasWhiteShadowed.dataFileUrl
+    );
+    // Pribambas Black
+    this.load.bitmapFont(
+      ASSETS.fontPribambasBlack.key,
+      ASSETS.fontPribambasBlack.imageUrl,
+      ASSETS.fontPribambasBlack.dataFileUrl
+    );
+    // Double Shadowed
+    this.load.bitmapFont(
+      ASSETS.fontDoubleShadowed.key,
+      ASSETS.fontDoubleShadowed.imageUrl,
+      ASSETS.fontDoubleShadowed.dataFileUrl
+    );
   }
 
   create() {
     console.log("preloader");
 
-    // Анимации
+    // Анимации игрока
     this.createAnimationPlayerRun();
     this.createAnimationFlames();
     this.createAnimationPlayerFly();
     this.createAnimationPlayerFall();
     this.createAnimationPlayerDeath();
+
+    // Анимации баффов
+    this.createAnimationBuffBreakIdle();
+    this.createAnimationBuffBreakPop();
 
     // После загрузки ассетов идем в меню
     this.scene.start(SCENES.menu);
@@ -125,6 +167,28 @@ export default class Preloader extends Phaser.Scene {
       key: ASSETS.player.animations.death,
       frames: [{ key: ASSETS.player.key, frame: "anim_dead.png" }],
       frameRate: 10,
+      repeat: 0,
+    });
+  }
+
+  createAnimationBuffBreakIdle() {
+    this.anims.create({
+      key: ASSETS.buffBreak.animations.idle,
+      frames: [{ key: ASSETS.buffBreak.key, frame: "bubble-01.png" }],
+      frameRate: 10,
+      repeat: 0,
+    });
+  }
+  createAnimationBuffBreakPop() {
+    this.anims.create({
+      key: ASSETS.buffBreak.animations.pop,
+      frames: [
+        { key: ASSETS.buffBreak.key, frame: "bubble-02.png" },
+        { key: ASSETS.buffBreak.key, frame: "bubble-03.png" },
+        { key: ASSETS.buffBreak.key, frame: "bubble-04.png" },
+        { key: ASSETS.buffBreak.key, frame: "bubble-05.png" },
+      ],
+      frameRate: 12,
       repeat: 0,
     });
   }
