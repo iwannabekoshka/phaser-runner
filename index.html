@@ -7,12 +7,17 @@
   <title>Runner game</title>
 </head>
 <body>
-<h1>Runner game</h1>
+<h1 style="font-family: 'lifeisstrangeru', monospace">Runner game</h1>
 
 <div class="container">
-  <div class="d-flex align-items-center justify-content-center">
+  <div id="canvas-container">
     <canvas id="game"></canvas>
   </div>
+
+    <div id="font-loader" style="width: 0; height: 0; margin: 0">
+      <h1 style="font-family: 'lifeisstrangeru', monospace; margin: 0;">&nbsp;</h1>
+      <h2 style="font-family: 'Luckiest Guy', monospace; margin: 0;">&nbsp;</h2>
+    </div>
 </div>
 
 <script type="module" src="/src/main.ts"></script>

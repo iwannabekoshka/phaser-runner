@@ -1,5 +1,7 @@
 import * as Phaser from "phaser";
 import { SCENES } from "../SCENES";
+import ASSETS from "../../ASSETS";
+import BitmapText = Phaser.GameObjects.BitmapText;
 
 export default class GameOver extends Phaser.Scene {
   constructor() {
@@ -7,9 +9,9 @@ export default class GameOver extends Phaser.Scene {
   }
 
   /**
-   * Конечный текст
+   * Карточка с контентом
    */
-  text!: Phaser.GameObjects.Text;
+  card!: Phaser.GameObjects.Image;
 
   /**
    * Счет
@@ -19,62 +21,57 @@ export default class GameOver extends Phaser.Scene {
   /**
    * Текст счета
    */
-  scoreText!: Phaser.GameObjects.Text;
+  scoreText!: BitmapText;
+
+  /**
+   * Кнопка Начать заново
+   */
+  btnRestart!: Phaser.GameObjects.Image;
 
   init(data: any) {
     this.score = data.score;
+    // this.score = 12345;
   }
 
   create() {
-    this.drawText();
-    this.handleSpace();
+    this.drawCard();
+    this.drawScore();
+    this.drawBtnRestart();
   }
 
-  /**
-   * Рисует текст lol u died
-   */
-  drawText(): void {
-    this.text = this.add
-      .text(this.scale.width / 2, this.scale.height / 2, "LOL u DIED", {
-        fontSize: "32px",
-        color: "red",
-        backgroundColor: "black",
-        padding: {
-          left: 15,
-          right: 15,
-          top: 15,
-          bottom: 15,
-        },
-      })
-      .setOrigin(0.5);
+  drawCard() {
+    this.card = this.add
+      .image(
+        this.scale.width / 2 + 65 / 2,
+        this.scale.height / 2,
+        ASSETS.deadscreen.key
+      )
+      .setOrigin(0.5, 0.5);
+  }
 
+  drawScore() {
     this.scoreText = this.add
-      .text(
-        this.scale.width / 2,
-        this.text.y + this.text.height + 20,
-        `Score: ${this.score}`,
-        {
-          fontSize: "32px",
-          color: "red",
-          backgroundColor: "black",
-          padding: {
-            left: 15,
-            right: 15,
-            top: 15,
-            bottom: 15,
-          },
-        }
+      .bitmapText(
+        this.scale.width / 2 + 10,
+        163,
+        ASSETS.fontPribambasWhiteShadowed.key,
+        `${this.score}`,
+        50
       )
       .setOrigin(0.5);
   }
 
-  handleSpace(): void {
-    this.input.keyboard.once("keydown-SPACE", () => {
+  drawBtnRestart() {
+    this.btnRestart = this.add
+      .image(this.scale.width / 2, 435, ASSETS.btnAgain.key)
+      .setInteractive({ cursor: "pointer" })
+      .setOrigin(0.5, 0);
+    this.btnRestart.x -= this.btnRestart.width / 2 + 11;
+
+    this.btnRestart.on("pointerdown", () => {
       // Сначала стопим сцены
       this.scene.stop(SCENES.end);
-      this.scene.stop(SCENES.game);
 
-      // Потом запускаем игру
       this.scene.start(SCENES.game);
     });
   }

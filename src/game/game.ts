@@ -6,8 +6,13 @@ import GameOver from "./scenes/gameOver/GameOver";
 
 export default new Phaser.Game({
   type: Phaser.CANVAS,
-  width: 1000,
-  height: 500,
+  scale: {
+    mode: Phaser.Scale.FIT,
+    parent: <HTMLDivElement>document.querySelector("#canvas-container"),
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 1110,
+    height: 624,
+  },
   canvas: <HTMLCanvasElement>document.querySelector("#game"),
   scene: [Preloader, Menu, Game, GameOver],
   physics: {

@@ -1,6 +1,10 @@
 @use './variables' as var;
 
 @font-face {
+  font-family: "Luckiest Guy";
+  src: url('/game/fonts/luckiest_guy/LuckiestGuy-Regular.ttf');
+}
+@font-face {
   font-family: "lifeisstrangeru";
   src: url('/game/fonts/lifeisstrange_dark/lifeisstrangeru.ttf');
 }
@@ -39,4 +43,43 @@ h1 {
 }
 .justify-content-center {
   justify-content: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+#game {
+  margin-top: 0 !important;
+}
+.fullscreen {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: rgba(255,255,255, 0.8);
+
+  &.short {
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+      margin: 0 !important;
+    }
+  }
+
+  &.long {
+    canvas {
+      width: auto !important;
+      height: 100% !important;
+      margin: 0 !important;
+    }
+  }
 }

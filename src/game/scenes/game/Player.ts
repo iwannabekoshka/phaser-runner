@@ -57,7 +57,7 @@ export default class Player extends Phaser.GameObjects.Container {
    * Скорость игрока
    */
   // TODO 200
-  playerSpeed = 200;
+  playerSpeed = 300;
 
   /**
    * На сколько мышь ускоряется спустя время
@@ -76,11 +76,6 @@ export default class Player extends Phaser.GameObjects.Container {
   deltaSeconds = 5;
 
   /**
-   * Время действия кофе, ms
-   */
-  coffeeTime = 5000;
-
-  /**
    * Время перерыва
    */
   breakTime = 5000;
@@ -91,7 +86,7 @@ export default class Player extends Phaser.GameObjects.Container {
     switch (this.playerState) {
       case PlayerState.Running: {
         // Если нажат пробел
-        if (this.cursors.space?.isDown && !this.isFalling) {
+        if ((this.cursors.space?.isDown || false) && !this.isFalling) {
           if (body.y === 0) {
             this.isFalling = true;
             break;
@@ -133,6 +128,9 @@ export default class Player extends Phaser.GameObjects.Container {
 
       case PlayerState.Killed: {
         body.velocity.x *= 0.99;
+        body.velocity.x -= 5;
+        body.velocity.y = 0;
+        body.setAccelerationY(1000);
 
         if (body.velocity.x <= 5) {
           this.playerState = PlayerState.Dead;
@@ -212,10 +210,10 @@ export default class Player extends Phaser.GameObjects.Container {
    */
   kill() {
     // TODO убрать после дебага
-    return;
+    // return;
 
     if (this.playerState !== PlayerState.Running) {
-      // return;
+      return;
     }
 
     this.playerState = PlayerState.Killed;
@@ -232,7 +230,7 @@ export default class Player extends Phaser.GameObjects.Container {
    */
   speedUpPlayerByTime(time: number): void {
     //TODO убрать после дебага
-    return;
+    // return;
 
     if (this.playerSpeed === 0) {
       return;
@@ -247,23 +245,6 @@ export default class Player extends Phaser.GameObjects.Container {
       this.playerSpeed += this.deltaSpeed;
       body.setVelocityX(this.playerSpeed);
     }
-  }
-
-  /**
-   * Замедляет мышь на время
-   */
-  slowdownPlayerByCoffee(): void {
-    const body = this.body as Phaser.Physics.Arcade.Body;
-
-    const prevSpeed = this.playerSpeed;
-
-    this.playerSpeed = prevSpeed * 0.5;
-    body.setVelocityX(this.playerSpeed);
-
-    setTimeout(() => {
-      this.playerSpeed = prevSpeed;
-      body.setVelocityX(this.playerSpeed);
-    }, this.coffeeTime);
   }
 
   stopPlayerByBreak() {

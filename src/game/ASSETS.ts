@@ -23,15 +23,21 @@ const ASSETS = {
   },
   coin: {
     key: "coin",
-    imageUrl: "/game/office/buffs/plus_money.png",
-  },
-  buffCoffee: {
-    key: "buffCoffee",
-    imageUrl: "/game/office/buffs/coffee.png",
+    imageUrl: "/game/office/buffs/coin/coin.png",
+    dataFileUrl: "/game/office/buffs/coin/coin.json",
+    animations: {
+      idle: "animationBuffCoinIdle",
+      pop: "animationBuffCoinPop",
+    },
   },
   buffX2: {
     key: "buffX2",
-    imageUrl: "/game/office/buffs/x2.png",
+    imageUrl: "/game/office/buffs/x2/x2.png",
+    dataFileUrl: "/game/office/buffs/x2/x2.json",
+    animations: {
+      idle: "animationBuffX2Idle",
+      pop: "animationBuffX2Pop",
+    },
   },
   buffBreak: {
     key: "buffBreak",
@@ -44,11 +50,21 @@ const ASSETS = {
   },
   buffPvs: {
     key: "buffPvs",
-    imageUrl: "/game/office/buffs/pvs.png",
+    imageUrl: "/game/office/buffs/pvs/pvs.png",
+    dataFileUrl: "/game/office/buffs/pvs/pvs.json",
+    animations: {
+      idle: "animationBuffPvsIdle",
+      pop: "animationBuffPvsPop",
+    },
   },
   buffMentor: {
     key: "buffMentor",
-    imageUrl: "/game/office/buffs/mentor.png",
+    imageUrl: "/game/office/buffs/mentor/mentor.png",
+    dataFileUrl: "/game/office/buffs/mentor/mentor.json",
+    animations: {
+      idle: "animationBuffMentorIdle",
+      pop: "animationBuffMentorPop",
+    },
   },
   debuffBug: {
     key: "debuffBug",
@@ -96,6 +112,62 @@ const ASSETS = {
     key: "fontPribambasBlack",
     imageUrl: "/game/fonts/pribambas_black/pribambas_black.png",
     dataFileUrl: "/game/fonts/pribambas_black/pribambas_black.xml",
+  },
+  menuLogo: {
+    key: "menuLogo",
+    imageUrl: "/game/interface/game-logo.png",
+  },
+  menuBg: {
+    key: "menuBg",
+    imageUrl: "/game/interface/menu-bg.png",
+  },
+  btnStart: {
+    key: "btnStart",
+    imageUrl: "/game/interface/btn-start.png",
+  },
+  btnLeaderboard: {
+    key: "btnLeaderboard",
+    imageUrl: "/game/interface/btn-leaderboard.png",
+  },
+  btnMute: {
+    key: "btnMute",
+    imageUrl: "/game/interface/btn-mute.png",
+  },
+  btnInfo: {
+    key: "btnInfo",
+    imageUrl: "/game/interface/btn-info.png",
+  },
+  btnFullscreen: {
+    key: "btnFullscreen",
+    imageUrl: "/game/interface/btn-fullscreen.png",
+  },
+  cup: {
+    key: "cup",
+    imageUrl: "/game/interface/cup.png",
+  },
+  tutorial_1: {
+    key: "tutorial_1",
+    imageUrl: "/game/interface/tutorial/tutorial-1.png",
+  },
+  tutorial_2: {
+    key: "tutorial_2",
+    imageUrl: "/game/interface/tutorial/tutorial-2.png",
+  },
+  leaderboard: {
+    key: "leaderboard",
+    imageUrl: "/game/interface/leaderboard/leaderboard.png",
+  },
+  btnAgain: {
+    key: "btnAgain",
+    imageUrl: "/game/interface/btn-again.png",
+  },
+  btnSubscribe: {
+    key: "btnSubscribe",
+    imageUrl: "/game/interface/btn-subscribe.png",
+  },
+  deadscreen: {
+    key: "deadscreen",
+    imageUrl: "/game/interface/deadscreen/dead-screen.svg",
   },
 };
 
