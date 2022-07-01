@@ -289,13 +289,16 @@ export default class Game extends Phaser.Scene {
   }
 
   playBuffAnimationAndRespawn(buff: string) {
+    // @ts-ignore
     const body = this[buff].body;
 
+    // @ts-ignore
     this[buff].play(ASSETS[buff].animations.pop);
     body.checkCollision.none = true;
 
     setTimeout(() => {
       this.spawnBuff2(buff);
+      // @ts-ignore
       this[buff].play(ASSETS[buff].animations.idle);
       body.checkCollision.none = false;
     }, 1000);

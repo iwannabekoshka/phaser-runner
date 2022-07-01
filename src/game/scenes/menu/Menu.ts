@@ -443,7 +443,7 @@ export default class Menu extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
 
-    spaceBar.on("down", () => this.goGameScene(this));
+    spaceBar.on("down", () => this.goGameScene());
   }
 
   goGameScene(): void {
