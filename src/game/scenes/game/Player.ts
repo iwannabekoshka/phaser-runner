@@ -86,7 +86,11 @@ export default class Player extends Phaser.GameObjects.Container {
     switch (this.playerState) {
       case PlayerState.Running: {
         // Если нажат пробел
-        if ((this.cursors.space?.isDown || false) && !this.isFalling) {
+        if (
+          (this.cursors.space?.isDown ||
+            this.scene.input.activePointer.isDown) &&
+          !this.isFalling
+        ) {
           if (body.y === 0) {
             this.isFalling = true;
             break;
