@@ -310,6 +310,36 @@ export default class Menu extends Phaser.Scene {
       const canvas = document.querySelector("#canvas-container")!;
       canvas.classList.toggle("fullscreen");
       canvas.classList.toggle(deviceClass);
+
+      if (document.fullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+          // @ts-ignore
+        } else if (document.webkitExitFullscreen) {
+          /* Safari */
+          // @ts-ignore
+          document.webkitExitFullscreen();
+          // @ts-ignore
+        } else if (document.msExitFullscreen) {
+          /* IE11 */
+          // @ts-ignore
+          document.msExitFullscreen();
+        }
+      } else {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+          // @ts-ignore
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          /* Safari */
+          // @ts-ignore
+          document.documentElement.webkitRequestFullscreen();
+          // @ts-ignore
+        } else if (document.documentElement.msRequestFullscreen) {
+          /* IE11 */
+          // @ts-ignore
+          document.documentElement.msRequestFullscreen();
+        }
+      }
     });
   }
 
