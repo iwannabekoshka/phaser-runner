@@ -560,8 +560,8 @@ export default class Game extends Phaser.Scene {
     this.initBuff2(ASSETS.coin.key);
     this.initBuff2(ASSETS.buffX2.key);
     this.initBuff2(ASSETS.buffBreak.key);
-    // this.initBuff2(ASSETS.buffPvs.key);
-    // this.initBuff2(ASSETS.buffMentor.key);
+    this.initBuff2(ASSETS.buffPvs.key);
+    this.initBuff2(ASSETS.buffMentor.key);
   }
 
   /**
@@ -571,8 +571,8 @@ export default class Game extends Phaser.Scene {
     this.respawnBuff2(ASSETS.coin.key);
     this.respawnBuff2(ASSETS.buffX2.key);
     this.respawnBuff2(ASSETS.buffBreak.key);
-    // this.respawnBuff2(ASSETS.buffPvs.key);
-    // this.respawnBuff2(ASSETS.buffMentor.key);
+    this.respawnBuff2(ASSETS.buffPvs.key);
+    this.respawnBuff2(ASSETS.buffMentor.key);
   }
 
   /**
