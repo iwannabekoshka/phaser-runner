@@ -16,6 +16,7 @@ export default class Player extends Phaser.GameObjects.Container {
 
     this.initFlames(scene);
     this.initPlayer(scene);
+    this.initPvsShield(scene);
     this.initCursors(scene);
 
     this.toggleJetpack(false);
@@ -42,6 +43,11 @@ export default class Player extends Phaser.GameObjects.Container {
    * Огни из жёпы
    */
   flames!: Phaser.GameObjects.Sprite;
+
+  /**
+   * Щит пвс
+   */
+  pvsShield!: Phaser.GameObjects.Sprite;
 
   /**
    * Управление стрелочками и пробелом
@@ -80,6 +86,8 @@ export default class Player extends Phaser.GameObjects.Container {
    */
   breakTime = 5000;
 
+  isDonut = false;
+
   preUpdate(t: number, dt: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
 
@@ -103,7 +111,9 @@ export default class Player extends Phaser.GameObjects.Container {
           this.toggleJetpack(true);
 
           // Анимация полета
-          this.player.play(ASSETS.player.animations.fly, true);
+          if (!this.isDonut) {
+            this.player.play(ASSETS.player.animations.fly, true);
+          }
 
           // Если не летим вверх
         } else {
@@ -115,11 +125,15 @@ export default class Player extends Phaser.GameObjects.Container {
           // Если стоим на земле
           if (body.blocked.down) {
             // Дефолтная анимация бега
-            this.player.play(ASSETS.player.animations.run, true);
+            if (!this.isDonut) {
+              this.player.play(ASSETS.player.animations.run, true);
+            }
             this.isFalling = false;
           } else {
             // Анимация падения
-            this.player.play(ASSETS.player.animations.fall, true);
+            if (!this.isDonut) {
+              this.player.play(ASSETS.player.animations.fall, true);
+            }
             this.isFalling = true;
           }
         }
@@ -134,7 +148,7 @@ export default class Player extends Phaser.GameObjects.Container {
         body.velocity.x *= 0.99;
         body.velocity.x -= 5;
         body.velocity.y = 0;
-        body.setAccelerationY(1000);
+        body.setAccelerationY(10000);
 
         if (body.velocity.x <= 5) {
           this.playerState = PlayerState.Dead;
@@ -189,8 +203,29 @@ export default class Player extends Phaser.GameObjects.Container {
     this.flames = scene.add
       .sprite(-31, -15, ASSETS.player.key)
       .play(ASSETS.player.animations.flamesOn)
-      .setScale(0.5);
+      .setScale(0.5)
+      .setVisible(true);
     this.add(this.flames);
+  }
+
+  initPvsShield(scene: Phaser.Scene): void {
+    this.pvsShield = scene.add
+      .sprite(5, -100, ASSETS.playerPvsShield.key)
+      .play(ASSETS.playerPvsShield.animations.bubble)
+      .setScale(0.85)
+      .setOrigin(0.5)
+      .setVisible(false);
+    this.add(this.pvsShield);
+  }
+
+  setPvsShieldBlinking() {
+    this.pvsShield.play(ASSETS.playerPvsShield.animations.blink);
+  }
+
+  setDonutAnimation(isDonut: boolean) {
+    if (isDonut) {
+      this.player.play(ASSETS.player.animations.donut);
+    }
   }
 
   /**
@@ -207,6 +242,10 @@ export default class Player extends Phaser.GameObjects.Container {
    */
   toggleJetpack(enabled: boolean): void {
     this.flames.setVisible(enabled);
+  }
+
+  toggleShield(enabled: boolean) {
+    this.pvsShield.setVisible(enabled);
   }
 
   /**

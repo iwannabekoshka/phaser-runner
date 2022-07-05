@@ -87,6 +87,10 @@ export default class Menu extends Phaser.Scene {
    */
   btnLeaderboard!: Phaser.GameObjects.Image;
   /**
+   * Кнопка назад
+   */
+  btnBack!: Phaser.GameObjects.Image;
+  /**
    * Кнопка звука
    */
   btnMute!: Phaser.GameObjects.Image;
@@ -155,11 +159,14 @@ export default class Menu extends Phaser.Scene {
     this.drawBtnLeaderboard();
     this.drawBtnMute();
     this.drawBtnInfo();
-    this.drawBtnFullscreen();
+    if (window.screen.width < 768) {
+      this.drawBtnFullscreen();
+    }
     this.drawHighScore();
     this.drawTutorial();
     this.drawLeaderboard();
     this.drawBtnSubscribe();
+    this.drawBtnBack();
   }
 
   // Отрабатывает на каждый тик
@@ -183,7 +190,7 @@ export default class Menu extends Phaser.Scene {
   drawLogoText() {
     this.logoText = this.add
       .image(this.scale.width / 2, this.offsetScreenY, ASSETS.menuLogo.key)
-      .setScale(this.assetsScale)
+      .setScale(1)
       .setOrigin(0.5, 0);
   }
 
@@ -230,6 +237,7 @@ export default class Menu extends Phaser.Scene {
       this.leaderboardColName.setDepth(3);
       this.leaderboardColRecord.setDepth(3);
       this.btnSubscribe.setDepth(3);
+      this.btnBack.setDepth(3);
     });
   }
 
@@ -239,14 +247,40 @@ export default class Menu extends Phaser.Scene {
         this.scale.width / 2 + 15,
         this.leaderboard.y +
           (this.leaderboard.height * this.assetsScale) / 2 -
-          this.btnLeaderboard.height +
-          2,
+          this.btnLeaderboard.height -
+          10,
         ASSETS.btnSubscribe.key
       )
       .setInteractive({ cursor: "pointer" })
       .setOrigin(0, 0.5)
       .setScale(this.assetsScale)
       .setDepth(-1);
+  }
+
+  drawBtnBack() {
+    this.btnBack = this.add
+      .image(
+        this.scale.width / 2 - 15,
+        this.leaderboard.y +
+          (this.leaderboard.height * this.assetsScale) / 2 -
+          this.btnLeaderboard.height -
+          10,
+        ASSETS.btnBack.key
+      )
+      .setInteractive({ cursor: "pointer" })
+      .setOrigin(1, 0.5)
+      .setScale(this.assetsScale)
+      .setDepth(-1);
+
+    this.btnBack.on("pointerdown", () => {
+      this.bg.setDepth(-1);
+      this.leaderboard.setDepth(-10);
+      this.leaderboardColNum.setDepth(-10);
+      this.leaderboardColName.setDepth(-10);
+      this.leaderboardColRecord.setDepth(-10);
+      this.btnSubscribe.setDepth(-10);
+      this.btnBack.setDepth(-10);
+    });
   }
 
   /**

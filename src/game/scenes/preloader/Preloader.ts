@@ -48,6 +48,12 @@ export default class Preloader extends Phaser.Scene {
       ASSETS.buffBreak.imageUrl,
       ASSETS.buffBreak.dataFileUrl
     );
+    // Щит ПВС
+    this.load.atlas(
+      ASSETS.playerPvsShield.key,
+      ASSETS.playerPvsShield.imageUrl,
+      ASSETS.playerPvsShield.dataFileUrl
+    );
 
     // Неприятности
     this.load.image(ASSETS.debuffBug.key, ASSETS.debuffBug.imageUrl);
@@ -108,6 +114,8 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.btnFullscreen.key, ASSETS.btnFullscreen.imageUrl);
     // Кнопка заново
     this.load.image(ASSETS.btnAgain.key, ASSETS.btnAgain.imageUrl);
+    // Кнопка заново
+    this.load.image(ASSETS.btnBack.key, ASSETS.btnBack.imageUrl);
     // Кнопка Подписаться
     this.load.image(ASSETS.btnSubscribe.key, ASSETS.btnSubscribe.imageUrl);
     // Кубок
@@ -120,6 +128,18 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.leaderboard.key, ASSETS.leaderboard.imageUrl);
     // Таблица лидеров
     this.load.image(ASSETS.deadscreen.key, ASSETS.deadscreen.imageUrl);
+    // Победный единорог как Тони Старк
+    this.load.image(ASSETS.unicornStark.key, ASSETS.unicornStark.imageUrl);
+    // Текст в конце, когда побил рекорд
+    this.load.image(
+      ASSETS.finalTextRecord.key,
+      ASSETS.finalTextRecord.imageUrl
+    );
+    // Ссылка на лидерборд
+    this.load.image(
+      ASSETS.linkToLeaderboard.key,
+      ASSETS.linkToLeaderboard.imageUrl
+    );
   }
 
   create() {
@@ -131,6 +151,9 @@ export default class Preloader extends Phaser.Scene {
     this.createAnimationPlayerFly();
     this.createAnimationPlayerFall();
     this.createAnimationPlayerDeath();
+    this.createAnimationPlayerPvsShield();
+    this.createAnimationPlayerPvsShieldBlink();
+    this.createAnimationPlayerDonut();
 
     // Анимации баффов
     this.createAnimationBuffBreakIdle();
@@ -160,6 +183,42 @@ export default class Preloader extends Phaser.Scene {
         { key: ASSETS.player.key, frame: "anim_run_3.png" },
         { key: ASSETS.player.key, frame: "anim_run_4.png" },
         { key: ASSETS.player.key, frame: "anim_run_5.png" },
+      ],
+      frameRate: 10,
+      repeat: -1, // infinity
+    });
+  }
+
+  createAnimationPlayerDonut(): void {
+    this.anims.create({
+      key: ASSETS.player.animations.donut,
+      frames: [
+        { key: ASSETS.player.key, frame: "donut_run_1.png" },
+        { key: ASSETS.player.key, frame: "donut_run_2.png" },
+        { key: ASSETS.player.key, frame: "donut_run_3.png" },
+        { key: ASSETS.player.key, frame: "donut_run_4.png" },
+        { key: ASSETS.player.key, frame: "donut_run_5.png" },
+        { key: ASSETS.player.key, frame: "donut_run_6.png" },
+        { key: ASSETS.player.key, frame: "donut_run_7.png" },
+        { key: ASSETS.player.key, frame: "donut_run_8.png" },
+        { key: ASSETS.player.key, frame: "donut_run_9.png" },
+        { key: ASSETS.player.key, frame: "donut_run_10.png" },
+        { key: ASSETS.player.key, frame: "donut_run_11.png" },
+        { key: ASSETS.player.key, frame: "donut_run_12.png" },
+        { key: ASSETS.player.key, frame: "donut_run_13.png" },
+        { key: ASSETS.player.key, frame: "donut_run_14.png" },
+        { key: ASSETS.player.key, frame: "donut_run_15.png" },
+        { key: ASSETS.player.key, frame: "donut_run_16.png" },
+        { key: ASSETS.player.key, frame: "donut_run_17.png" },
+        { key: ASSETS.player.key, frame: "donut_run_18.png" },
+        { key: ASSETS.player.key, frame: "donut_run_19.png" },
+        { key: ASSETS.player.key, frame: "donut_run_20.png" },
+        { key: ASSETS.player.key, frame: "donut_run_21.png" },
+        { key: ASSETS.player.key, frame: "donut_run_22.png" },
+        { key: ASSETS.player.key, frame: "donut_run_23.png" },
+        { key: ASSETS.player.key, frame: "donut_run_24.png" },
+        { key: ASSETS.player.key, frame: "donut_run_25.png" },
+        { key: ASSETS.player.key, frame: "donut_run_26.png" },
       ],
       frameRate: 10,
       repeat: -1, // infinity
@@ -361,6 +420,46 @@ export default class Preloader extends Phaser.Scene {
       ],
       frameRate: 12,
       repeat: 0,
+    });
+  }
+
+  createAnimationPlayerPvsShield() {
+    this.anims.create({
+      key: ASSETS.playerPvsShield.animations.bubble,
+      frames: [
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-01.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-02.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-03.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-04.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-05.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-06.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-07.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-08.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-09.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_2-10.png" },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
+
+  createAnimationPlayerPvsShieldBlink() {
+    this.anims.create({
+      key: ASSETS.playerPvsShield.animations.blink,
+      frames: [
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-01.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-02.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-03.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-04.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-05.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-06.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-07.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-08.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-09.png" },
+        { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-10.png" },
+      ],
+      frameRate: 6,
+      repeat: -1,
     });
   }
 }

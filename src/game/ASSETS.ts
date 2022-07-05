@@ -19,6 +19,16 @@ const ASSETS = {
       fly: "animationPlayerFly",
       fall: "animationPlayerFall",
       death: "death",
+      donut: "animationPlayerDonut",
+    },
+  },
+  playerPvsShield: {
+    key: "playerPvsShield",
+    imageUrl: "/game/player/pvs/pvs.png",
+    dataFileUrl: "/game/player/pvs/pvs.json",
+    animations: {
+      bubble: "animationPlayerPvsShield",
+      blink: "animationPlayerPvsShieldBlink",
     },
   },
   coin: {
@@ -123,7 +133,7 @@ const ASSETS = {
   },
   btnStart: {
     key: "btnStart",
-    imageUrl: "/game/interface/btn-start.png",
+    imageUrl: "/game/interface/btn-start.svg",
   },
   btnLeaderboard: {
     key: "btnLeaderboard",
@@ -161,6 +171,10 @@ const ASSETS = {
     key: "btnAgain",
     imageUrl: "/game/interface/btn-again.png",
   },
+  btnBack: {
+    key: "btnBack",
+    imageUrl: "/game/interface/btn-again.png",
+  },
   btnSubscribe: {
     key: "btnSubscribe",
     imageUrl: "/game/interface/btn-subscribe.png",
@@ -168,6 +182,18 @@ const ASSETS = {
   deadscreen: {
     key: "deadscreen",
     imageUrl: "/game/interface/deadscreen/dead-screen.svg",
+  },
+  unicornStark: {
+    key: "unicornStark",
+    imageUrl: "/game/interface/deadscreen/unicorn-stark.svg",
+  },
+  finalTextRecord: {
+    key: "finalTextRecord",
+    imageUrl: "/game/interface/deadscreen/final-text-record.svg",
+  },
+  linkToLeaderboard: {
+    key: "linkToLeaderboard",
+    imageUrl: "/game/interface/deadscreen/link-to-leaderboard.svg",
   },
 };
 
