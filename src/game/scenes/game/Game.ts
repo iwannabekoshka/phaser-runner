@@ -9,27 +9,27 @@ const overlapEntities = [
   {
     name: ASSETS.buffX2.key,
     xFrom: 0,
-    xTo: 1,
+    xTo: 0.5,
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 0,
-    xTo: 1,
+    xFrom: 1000,
+    xTo: 2000,
   },
   {
     name: ASSETS.buffPvs.key,
     xFrom: 0,
-    xTo: 1,
+    xTo: 0.5,
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 0,
-    xTo: 1,
+    xFrom: 1000,
+    xTo: 2000,
   },
   {
     name: ASSETS.coin.key,
     xFrom: 0,
-    xTo: 1,
+    xTo: 0.5,
   },
 ];
 
@@ -83,6 +83,10 @@ export default class Game extends Phaser.Scene {
    */
   mentorLabel!: Phaser.GameObjects.Image;
   /**
+   * Отступ от верха игры
+   */
+  worldBoundTop = 50;
+  /**
    * Отступ от низа игры
    */
   worldBoundBottom = 50;
@@ -134,7 +138,7 @@ export default class Game extends Phaser.Scene {
     this.drawBackground();
 
     this.spawnDebuffs();
-    // this.initBuffs();
+    this.initBuffs();
 
     this.drawPlayer();
 
@@ -213,7 +217,7 @@ export default class Game extends Phaser.Scene {
 
     this.moveBackground();
     this.despawnDebuffOffScreen();
-    // this.respawnBuffs();
+    this.respawnBuffs();
 
     // Мышь умерла - пошли на конечную сцену
     if (this.player.playerState === PlayerState.Dead) {
@@ -471,8 +475,8 @@ export default class Game extends Phaser.Scene {
       rightEdge + this.scale.width * xTo
     );
     const y = Phaser.Math.Between(
-      buffBody.height,
-      this.scale.height - this.worldBoundBottom - buffBody.height * 3
+      buffBody.height / 2 + this.worldBoundTop,
+      this.scale.height - buffBody.height / 2 - this.worldBoundBottom
     );
 
     //@ts-ignore
@@ -480,7 +484,7 @@ export default class Game extends Phaser.Scene {
     //@ts-ignore
     this[buff].y = y;
 
-    buffBody.updateFromGameObject();
+    buffBody.reset(x, y);
 
     this.preventBuffOverlap(buff);
   }
@@ -538,7 +542,7 @@ export default class Game extends Phaser.Scene {
       );
 
       if (overlap) {
-        this.spawnBuff(buff);
+        this.spawnBuff2(buff);
       }
     });
   }
