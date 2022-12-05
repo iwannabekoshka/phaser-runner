@@ -157,7 +157,7 @@ export default class Menu extends Phaser.Scene {
     this.drawLogoText();
     this.drawBtnStart();
     this.drawBtnLeaderboard();
-    this.drawBtnMute();
+    // this.drawBtnMute();
     this.drawBtnInfo();
     if (window.screen.width < 768) {
       this.drawBtnFullscreen();
@@ -303,11 +303,7 @@ export default class Menu extends Phaser.Scene {
    */
   drawBtnInfo() {
     this.btnInfo = this.add
-      .image(
-        this.offsetScreenX,
-        this.offsetScreenY + this.btnMute.height * this.assetsScale + 20,
-        ASSETS.btnInfo.key
-      )
+      .image(this.offsetScreenX, this.offsetScreenY, ASSETS.btnInfo.key)
       .setInteractive({ cursor: "pointer" })
       .setOrigin(0, 0)
       .setScale(this.assetsScale);
