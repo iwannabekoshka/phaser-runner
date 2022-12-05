@@ -114,10 +114,10 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.btnFullscreen.key, ASSETS.btnFullscreen.imageUrl);
     // Кнопка заново
     this.load.image(ASSETS.btnAgain.key, ASSETS.btnAgain.imageUrl);
-    // Кнопка заново
-    this.load.image(ASSETS.btnBack.key, ASSETS.btnBack.imageUrl);
     // Кнопка Подписаться
     this.load.image(ASSETS.btnSubscribe.key, ASSETS.btnSubscribe.imageUrl);
+    // Кнопка Обратно в меню
+    this.load.image(ASSETS.btnBackToMenu.key, ASSETS.btnBackToMenu.imageUrl);
     // Кубок
     this.load.image(ASSETS.cup.key, ASSETS.cup.imageUrl);
     // Туториал 1

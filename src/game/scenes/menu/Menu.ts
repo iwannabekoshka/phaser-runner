@@ -165,7 +165,7 @@ export default class Menu extends Phaser.Scene {
     this.drawHighScore();
     this.drawTutorial();
     this.drawLeaderboard();
-    this.drawBtnSubscribe();
+    // this.drawBtnSubscribe();
     this.drawBtnBack();
   }
 
@@ -236,7 +236,7 @@ export default class Menu extends Phaser.Scene {
       this.leaderboardColNum.setDepth(3);
       this.leaderboardColName.setDepth(3);
       this.leaderboardColRecord.setDepth(3);
-      this.btnSubscribe.setDepth(3);
+      // this.btnSubscribe.setDepth(3);
       this.btnBack.setDepth(3);
     });
   }
@@ -265,7 +265,7 @@ export default class Menu extends Phaser.Scene {
           (this.leaderboard.height * this.assetsScale) / 2 -
           this.btnLeaderboard.height -
           10,
-        ASSETS.btnBack.key
+        ASSETS.btnBackToMenu.key
       )
       .setInteractive({ cursor: "pointer" })
       .setOrigin(1, 0.5)
@@ -278,7 +278,7 @@ export default class Menu extends Phaser.Scene {
       this.leaderboardColNum.setDepth(-10);
       this.leaderboardColName.setDepth(-10);
       this.leaderboardColRecord.setDepth(-10);
-      this.btnSubscribe.setDepth(-10);
+      // this.btnSubscribe.setDepth(-10);
       this.btnBack.setDepth(-10);
     });
   }

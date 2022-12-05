@@ -151,6 +151,10 @@ const ASSETS = {
     key: "btnFullscreen",
     imageUrl: "/game/interface/btn-fullscreen.png",
   },
+  btnBackToMenu: {
+    key: "btnBackToMenu",
+    imageUrl: "/game/interface/btn-back-to-menu.png",
+  },
   cup: {
     key: "cup",
     imageUrl: "/game/interface/cup.png",
