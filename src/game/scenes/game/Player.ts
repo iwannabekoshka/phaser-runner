@@ -218,8 +218,12 @@ export default class Player extends Phaser.GameObjects.Container {
     this.add(this.pvsShield);
   }
 
-  setPvsShieldBlinking() {
-    this.pvsShield.play(ASSETS.playerPvsShield.animations.blink);
+  setPvsShieldBlinking(isBlinking = true) {
+    if (isBlinking) {
+      this.pvsShield.play(ASSETS.playerPvsShield.animations.blink);
+    } else {
+      this.pvsShield.play(ASSETS.playerPvsShield.animations.bubble);
+    }
   }
 
   setDonutAnimation(isDonut: boolean) {
@@ -252,7 +256,7 @@ export default class Player extends Phaser.GameObjects.Container {
    * Убивает мышь.
    */
   kill() {
-    // TODO убрать после дебага
+    // DEMO: убрать после дебага
     // return;
 
     if (this.playerState !== PlayerState.Running) {

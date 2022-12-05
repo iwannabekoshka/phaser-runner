@@ -81,7 +81,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Текст ментора
    */
-  mentorLabel!: Phaser.GameObjects.Text;
+  mentorLabel!: Phaser.GameObjects.Image;
   /**
    * Отступ от низа игры
    */
@@ -134,7 +134,7 @@ export default class Game extends Phaser.Scene {
     this.drawBackground();
 
     this.spawnDebuffs();
-    this.initBuffs();
+    // this.initBuffs();
 
     this.drawPlayer();
 
@@ -213,7 +213,7 @@ export default class Game extends Phaser.Scene {
 
     this.moveBackground();
     this.despawnDebuffOffScreen();
-    this.respawnBuffs();
+    // this.respawnBuffs();
 
     // Мышь умерла - пошли на конечную сцену
     if (this.player.playerState === PlayerState.Dead) {
@@ -276,36 +276,15 @@ export default class Game extends Phaser.Scene {
    */
   drawScoreLabel(): void {
     this.scoreLabel = this.add
-      .bitmapText(
-        10,
-        10,
-        ASSETS.fontPribambasBlack.key,
-        `СЧЕТ: ${this.score}. МУЛЬТИ: Х${this.salaryMultiplier}`,
-        36
-      )
+      .bitmapText(30, 30, ASSETS.fontDoubleShadowed.key, `${this.score}`, 72)
       .setScrollFactor(0);
-
-    this.testLabel = this.add.bitmapText(
-      300,
-      0,
-      ASSETS.fontPribambasBlack.key,
-      "МАМА Я ПРИБАМБАС",
-      36
-    );
-    this.add.bitmapText(
-      300,
-      40,
-      ASSETS.fontDoubleShadowed.key,
-      "1234567890",
-      48
-    );
   }
 
   /**
    * Обновляет счет
    */
   updateScoreLabel(): void {
-    this.scoreLabel.text = `СЧЕТ: ${this.score}. МУЛЬТИ: x${this.salaryMultiplier}`;
+    this.scoreLabel.text = `${this.score}`;
   }
 
   /**
@@ -330,33 +309,48 @@ export default class Game extends Phaser.Scene {
     let x = rightEdge + 100;
 
     // Рандомное количество дебаффов
+    // DEMO:
     const numDebuffs = Phaser.Math.Between(1, 4);
+    // const numDebuffs = 30;
 
     const debuffsAssets = [
-      "debuffBug",
-      "debuffDeadline",
-      "debuffDebt",
-      "debuffDeploy",
-      "debuffTestFailed",
+      {
+        key: "debuffBug",
+        scale: 1,
+      },
+      {
+        key: "debuffDeadline",
+        scale: 0.75,
+      },
+      {
+        key: "debuffDebt",
+        scale: 1,
+      },
+      {
+        key: "debuffDeploy",
+        scale: 1,
+      },
+      {
+        key: "debuffTestFailed",
+        scale: 1,
+      },
     ];
-
-    const debuffScale = 0.75;
 
     for (let i = 0; i < numDebuffs; i++) {
       const randomAssetIndex = Math.floor(Math.random() * debuffsAssets.length);
-      const randomAssetKey = debuffsAssets[randomAssetIndex];
+      const randomAsset = debuffsAssets[randomAssetIndex];
 
       const debuff = this.debuffs
         .get(
           x,
           this.scale.height - this.worldBoundBottom,
           // @ts-ignore
-          ASSETS[randomAssetKey].key
+          ASSETS[randomAsset.key].key
         )
-        .setScale(debuffScale) as Phaser.Physics.Arcade.Sprite;
+        .setScale(randomAsset.scale)
+        .setOrigin(0.5, 1) as Phaser.Physics.Arcade.Sprite;
 
-      // Тк центр неприятности в центре, сдвигаем ее повыше чтоб как бы стояла на полу
-      debuff.y -= (debuff.height * debuffScale) / 2;
+      debuff.setY(this.scale.height - this.worldBoundBottom);
 
       // make sure coin is active and visible
       debuff.setVisible(true);
@@ -364,16 +358,20 @@ export default class Game extends Phaser.Scene {
 
       // enable and adjust physics body to be a circle
       const body = debuff.body as Phaser.Physics.Arcade.Body;
-      body.setCircle(body.width * 0.5);
+      body.setSize(body.width);
+      body.allowGravity = false;
       body.enable = true;
       // Не нашел, как задизейблить гравитацию, так что просто
       // даем ускорение в обратную сторону
-      body.setAccelerationY(-1800);
+      // body.setAccelerationY(-1800);
 
-      body.updateFromGameObject();
+      // body.updateFromGameObject();
+      body.reset(x, this.scale.height - this.worldBoundBottom);
 
       // move x a random amount
-      x += debuff.width * Phaser.Math.Between(3, 5);
+      // DEMO:
+      x += debuff.width * Phaser.Math.Between(4, 6);
+      // x += debuff.width;
     }
   }
 
@@ -623,6 +621,7 @@ export default class Game extends Phaser.Scene {
     setTimeout(() => {
       this.player.isInvincible = false;
       this.player.toggleShield(false);
+      this.player.setPvsShieldBlinking(false);
 
       this.updateInvincibilityLabel();
     }, 10000);
@@ -664,15 +663,19 @@ export default class Game extends Phaser.Scene {
    * Пишет под ментором ли ты
    */
   drawMentorLabel(): void {
-    this.mentorLabel = this.add.text(400, 10, "").setScrollFactor(0);
+    // this.mentorLabel = this.add.text(400, 10, "").setScrollFactor(0);
+    this.mentorLabel = this.add
+      .image(this.scale.width - 100, 65, ASSETS.buffMentor.key)
+      .setOrigin(0.5, 0)
+      .setAlpha(0)
+      .setScrollFactor(0);
   }
 
   /**
    * Обновляет сообщения о менторе
    */
   updateMentorLabel(): void {
-    const text = this.isMentor ? "Ментор спаси!" : "";
-    this.mentorLabel.text = text;
+    this.mentorLabel.alpha = this.isMentor ? 1 : 0;
   }
 
   /**
