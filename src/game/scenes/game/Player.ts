@@ -104,6 +104,10 @@ export default class Player extends Phaser.GameObjects.Container {
             break;
           }
 
+          if (body.blocked.down) {
+            body.setVelocityY(-400);
+          }
+
           // TODO убрать после дебага
           // body.setVelocityX(500);
 
