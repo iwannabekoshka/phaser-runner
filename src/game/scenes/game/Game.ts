@@ -13,18 +13,18 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 1000,
-    xTo: 1000,
+    xFrom: 2,
+    xTo: 4,
   },
   {
     name: ASSETS.buffPvs.key,
-    xFrom: 1000,
-    xTo: 1000,
+    xFrom: 2,
+    xTo: 4,
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 0,
-    xTo: 0,
+    xFrom: 2,
+    xTo: 4,
   },
   {
     name: ASSETS.coin.key,
@@ -61,7 +61,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Текст при подборе баффа x2
    */
-  buffX2PickupText!: BitmapText;
+  buffX2PickupText!: Phaser.GameObjects.Text;
   /**
    * Таймер текста при подборе баффа x2
    */
@@ -121,7 +121,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Текст счета
    */
-  scoreLabel!: BitmapText;
+  scoreLabel!: Phaser.GameObjects.Text;
   /**
    * Секунды для начисления очков
    */
@@ -137,7 +137,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Текст множителя
    */
-  salaryMultiplierLabel!: BitmapText;
+  salaryMultiplierLabel!: Phaser.GameObjects.Text;
   /** Минимальное расстояние между ништяками */
   overlapMargin = 2;
 
@@ -301,7 +301,13 @@ export default class Game extends Phaser.Scene {
    */
   drawScoreLabel(): void {
     this.scoreLabel = this.add
-      .bitmapText(30, 35, ASSETS.fontDoubleShadowed.key, `${this.score}`, 72)
+      .text(30, 35, `${this.score}`, {
+        fontFamily: "Pribambas",
+        fontSize: "72px",
+        color: "#00a6ff",
+        stroke: "black",
+        strokeThickness: 3,
+      })
       .setScrollFactor(0);
   }
 
@@ -311,12 +317,15 @@ export default class Game extends Phaser.Scene {
   drawScoreMultiplierLabel(): void {
     const FZ = 42;
     this.salaryMultiplierLabel = this.add
-      .bitmapText(
+      .text(
         this.scoreLabel.width + 50,
         this.scoreLabel.y + this.scoreLabel.height / 2 - FZ / 2,
-        ASSETS.fontPribambasBlack.key,
         `Х${this.salaryMultiplier}`,
-        FZ
+        {
+          fontFamily: "Pribambas",
+          fontSize: `${FZ}px`,
+          color: "#000",
+        }
       )
       .setScrollFactor(0);
   }
@@ -509,7 +518,8 @@ export default class Game extends Phaser.Scene {
     this.spawnBuff2(buff);
   }
 
-  spawnBuff2(buff: string) {
+  spawnBuff2(buff: string, specificCoords?: { x: number; y: number }) {
+    console.log("spawnBuff2");
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
     // @ts-ignore
     const { xFrom, xTo } = overlapEntities.find((e) => e.name === buff);
@@ -517,14 +527,22 @@ export default class Game extends Phaser.Scene {
     // @ts-ignore
     const buffBody = this[buff].body as Phaser.Physics.Arcade.Body;
 
-    const x = Phaser.Math.Between(
-      rightEdge + this.scale.width * xFrom,
-      rightEdge + this.scale.width * xTo
-    );
-    const y = Phaser.Math.Between(
-      buffBody.height / 2 + this.worldBoundTop,
-      this.scale.height - buffBody.height / 2 - this.worldBoundBottom
-    );
+    let x;
+    let y;
+
+    if (!specificCoords) {
+      x = Phaser.Math.Between(
+        rightEdge + this.scale.width * xFrom,
+        rightEdge + this.scale.width * xTo
+      );
+      y = Phaser.Math.Between(
+        buffBody.height / 2 + this.worldBoundTop,
+        this.scale.height - buffBody.height / 2 - this.worldBoundBottom
+      );
+    } else {
+      x = specificCoords.x;
+      y = specificCoords.y;
+    }
 
     //@ts-ignore
     this[buff].x = x;
@@ -589,7 +607,9 @@ export default class Game extends Phaser.Scene {
       );
 
       if (overlap) {
+        // @ts-ignore
         this.spawnBuff2(buff);
+        // this.spawnBuff2(buff, { x: this[entityName].x + 10, y: this[buff].y });
       }
     });
   }
@@ -645,14 +665,16 @@ export default class Game extends Phaser.Scene {
    */
   drawX2PickupText(): void {
     this.buffX2PickupText = this.add
-      .bitmapText(
+      .text(
         this.scale.width / 2,
-        this.worldBoundTop,
-        ASSETS.fontLifeIsStrangeDark.key,
-        `ТЫ ПОЛУЧИЛ ПОВЫШЕНИЕ!`,
-        36
+        this.salaryMultiplierLabel.y + this.salaryMultiplierLabel.height / 2,
+        "ТЫ ПОЛУЧИЛ ПОВЫШЕНИЕ!",
+        {
+          fontFamily: "lifeisstrangeru",
+          fontSize: "28px",
+        }
       )
-      .setOrigin(0.5, 0)
+      .setOrigin(0.5, 0.5)
       .setAlpha(0)
       .setScrollFactor(0);
   }
@@ -663,14 +685,12 @@ export default class Game extends Phaser.Scene {
     this.playBuffAnimationAndRespawn(ASSETS.buffBreak.key);
 
     this.player.isInvincible = true;
-    this.updateInvincibilityLabel();
     this.salary = 2;
     this.player.setDonutAnimation(true);
     this.player.isDonut = true;
 
     this.player.stopPlayerByBreak().then(() => {
       this.player.isInvincible = false;
-      this.updateInvincibilityLabel();
       this.salary = 1;
       this.player.isDonut = false;
     });
@@ -686,8 +706,6 @@ export default class Game extends Phaser.Scene {
     this.player.isInvincible = true;
     this.player.toggleShield(true);
 
-    this.updateInvincibilityLabel();
-
     // Ресетим состояние щита при подборе
     this.player.setPvsShieldBlinking(false);
     clearTimeout(this.buffPvsTimeout);
@@ -700,8 +718,6 @@ export default class Game extends Phaser.Scene {
       this.player.isInvincible = false;
       this.player.toggleShield(false);
       this.player.setPvsShieldBlinking(false);
-
-      this.updateInvincibilityLabel();
     }, 10000);
   }
 
@@ -710,14 +726,6 @@ export default class Game extends Phaser.Scene {
    */
   drawInvincibilityLabel(): void {
     this.invincibilityLabel = this.add.text(300, 10, "").setScrollFactor(0);
-  }
-
-  /**
-   * Обновляет сообщения об неуязвимости
-   */
-  updateInvincibilityLabel(): void {
-    const text = this.player.isInvincible ? "Неуязвимость!" : "";
-    this.invincibilityLabel.text = text;
   }
 
   /**
