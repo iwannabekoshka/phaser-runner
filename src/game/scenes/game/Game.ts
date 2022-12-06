@@ -23,8 +23,8 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 1000,
-    xTo: 2000,
+    xFrom: 0,
+    xTo: 0.1,
   },
   {
     name: ASSETS.coin.key,
@@ -90,6 +90,10 @@ export default class Game extends Phaser.Scene {
    * Текст ментора
    */
   mentorLabel!: Phaser.GameObjects.Image;
+  /**
+   * Таймер баффа ментора
+   */
+  buffMentorTimeout: ReturnType<typeof setTimeout> = setTimeout(() => {}, 0);
   /**
    * Отступ от верха игры
    */
@@ -668,7 +672,9 @@ export default class Game extends Phaser.Scene {
 
     this.updateMentorLabel();
 
-    setTimeout(() => {
+    clearTimeout(this.buffMentorTimeout);
+
+    this.buffMentorTimeout = setTimeout(() => {
       this.isMentor = false;
 
       this.updateMentorLabel();
