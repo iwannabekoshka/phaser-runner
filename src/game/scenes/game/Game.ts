@@ -14,17 +14,17 @@ const overlapEntities = [
   {
     name: ASSETS.buffBreak.key,
     xFrom: 1000,
-    xTo: 2000,
+    xTo: 1000,
   },
   {
     name: ASSETS.buffPvs.key,
-    xFrom: 0,
-    xTo: 0.5,
+    xFrom: 1000,
+    xTo: 1000,
   },
   {
     name: ASSETS.buffMentor.key,
     xFrom: 0,
-    xTo: 0.1,
+    xTo: 0,
   },
   {
     name: ASSETS.coin.key,
@@ -95,9 +95,9 @@ export default class Game extends Phaser.Scene {
    */
   isMentor = false;
   /**
-   * Текст ментора
+   * Картинка ментора когда подобран
    */
-  mentorLabel!: Phaser.GameObjects.Image;
+  mentorIndicator!: Phaser.GameObjects.Image;
   /**
    * Таймер баффа ментора
    */
@@ -164,7 +164,7 @@ export default class Game extends Phaser.Scene {
     this.drawScoreLabel();
     this.drawScoreMultiplierLabel();
     this.drawInvincibilityLabel();
-    this.drawMentorLabel();
+    this.drawMentorIndicator();
     this.drawX2PickupText();
 
     this.setCamera();
@@ -742,11 +742,11 @@ export default class Game extends Phaser.Scene {
   /**
    * Пишет под ментором ли ты
    */
-  drawMentorLabel(): void {
-    // this.mentorLabel = this.add.text(400, 10, "").setScrollFactor(0);
-    this.mentorLabel = this.add
-      .image(this.scale.width - 100, 65, ASSETS.buffMentor.key)
-      .setOrigin(0.5, 0)
+  drawMentorIndicator(): void {
+    this.mentorIndicator = this.add
+      .image(this.scale.width - 40, 40, ASSETS.mentorIndicator.key)
+      .setOrigin(1, 0)
+      .setScale(0.8)
       .setAlpha(0)
       .setScrollFactor(0);
   }
@@ -755,7 +755,7 @@ export default class Game extends Phaser.Scene {
    * Обновляет сообщения о менторе
    */
   updateMentorLabel(): void {
-    this.mentorLabel.alpha = this.isMentor ? 1 : 0;
+    this.mentorIndicator.alpha = this.isMentor ? 1 : 0;
   }
 
   /**

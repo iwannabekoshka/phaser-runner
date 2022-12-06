@@ -76,6 +76,10 @@ const ASSETS = {
       pop: "animationBuffMentorPop",
     },
   },
+  mentorIndicator: {
+    key: "mentorIndicator",
+    imageUrl: "/game/office/buffs/mentor/mentor-top-right.png",
+  },
   debuffBug: {
     key: "debuffBug",
     imageUrl: "/game/office/debuffs/bug.png",
