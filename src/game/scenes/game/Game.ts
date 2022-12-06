@@ -67,6 +67,14 @@ export default class Game extends Phaser.Scene {
    */
   buffPvs!: Phaser.Physics.Arcade.Sprite;
   /**
+   * Таймер баффа неуязвимости
+   */
+  buffPvsTimer: ReturnType<typeof setTimeout> = setTimeout(() => {}, 0);
+  /**
+   * Таймер баффа неуязвимости (мерцания)
+   */
+  buffPvsBlinkingTimer: ReturnType<typeof setTimeout> = setTimeout(() => {}, 0);
+  /**
    * Текст неуязвимости
    */
   invincibilityLabel!: Phaser.GameObjects.Text;
@@ -619,10 +627,15 @@ export default class Game extends Phaser.Scene {
 
     this.updateInvincibilityLabel();
 
-    setTimeout(() => {
+    // Ресетим состояние щита при подборе
+    this.player.setPvsShieldBlinking(false);
+    clearTimeout(this.buffPvsTimer);
+    clearTimeout(this.buffPvsBlinkingTimer);
+
+    this.buffPvsBlinkingTimer = setTimeout(() => {
       this.player.setPvsShieldBlinking();
     }, 7000);
-    setTimeout(() => {
+    this.buffPvsTimer = setTimeout(() => {
       this.player.isInvincible = false;
       this.player.toggleShield(false);
       this.player.setPvsShieldBlinking(false);
