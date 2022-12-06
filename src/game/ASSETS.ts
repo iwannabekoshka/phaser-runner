@@ -187,13 +187,21 @@ const ASSETS = {
     key: "btnSubscribe",
     imageUrl: "/game/interface/btn-subscribe.png",
   },
+  btnPrize: {
+    key: "btnPrize",
+    imageUrl: "/game/interface/btn-prize.png",
+  },
   deadscreen: {
     key: "deadscreen",
     imageUrl: "/game/interface/deadscreen/dead-screen.svg",
   },
   unicornStark: {
     key: "unicornStark",
-    imageUrl: "/game/interface/deadscreen/unicorn-stark.svg",
+    imageUrl: "/game/interface/deadscreen/unicorn-stark.png",
+  },
+  unicornMeh: {
+    key: "unicornMeh",
+    imageUrl: "/game/interface/deadscreen/unicorn-meh.png",
   },
   finalTextRecord: {
     key: "finalTextRecord",

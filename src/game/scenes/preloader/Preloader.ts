@@ -116,6 +116,8 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.btnAgain.key, ASSETS.btnAgain.imageUrl);
     // Кнопка Подписаться
     this.load.image(ASSETS.btnSubscribe.key, ASSETS.btnSubscribe.imageUrl);
+    // Кнопка Приз
+    this.load.image(ASSETS.btnPrize.key, ASSETS.btnPrize.imageUrl);
     // Кнопка Обратно в меню
     this.load.image(ASSETS.btnBackToMenu.key, ASSETS.btnBackToMenu.imageUrl);
     // Кубок
@@ -135,6 +137,8 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.deadscreen.key, ASSETS.deadscreen.imageUrl);
     // Победный единорог как Тони Старк
     this.load.image(ASSETS.unicornStark.key, ASSETS.unicornStark.imageUrl);
+    // Конечный единорог если набрал маловато
+    this.load.image(ASSETS.unicornMeh.key, ASSETS.unicornMeh.imageUrl);
     // Текст в конце, когда побил рекорд
     this.load.image(
       ASSETS.finalTextRecord.key,

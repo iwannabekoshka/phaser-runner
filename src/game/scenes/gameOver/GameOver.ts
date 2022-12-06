@@ -24,9 +24,19 @@ export default class GameOver extends Phaser.Scene {
   scoreText!: BitmapText;
 
   /**
+   * Количество очков чтоб получить триал
+   */
+  scoreForWin = 1000;
+
+  /**
    * Кнопка Начать заново
    */
   btnRestart!: Phaser.GameObjects.Image;
+
+  /**
+   * Кнопка Получить приз
+   */
+  btnPrize!: Phaser.GameObjects.Image;
 
   /**
    * Победный (или не очень) единорог
@@ -36,7 +46,7 @@ export default class GameOver extends Phaser.Scene {
   /**
    * Текст рядом с единорогом
    */
-  unicornText!: Phaser.GameObjects.Image;
+  unicornText!: Phaser.GameObjects.Text;
 
   /**
    * Ссылка на лидерборд
@@ -45,7 +55,6 @@ export default class GameOver extends Phaser.Scene {
 
   init(data: any) {
     this.score = data.score;
-    // this.score = 12345;
   }
 
   create() {
@@ -54,6 +63,7 @@ export default class GameOver extends Phaser.Scene {
     this.drawUnicorn();
     this.drawUnicornText();
     this.drawBtnRestart();
+    this.drawBtnGetPrize();
     this.drawLeaderboardLink();
   }
 
@@ -80,7 +90,16 @@ export default class GameOver extends Phaser.Scene {
       .image(this.scale.width / 2, 435, ASSETS.btnAgain.key)
       .setInteractive({ cursor: "pointer" })
       .setOrigin(0.5, 0);
-    this.btnRestart.x -= this.btnRestart.width / 2 + 16;
+
+    let x;
+
+    if (this.score >= this.scoreForWin) {
+      x = this.scale.width / 2 - this.btnRestart.width / 2 - 15;
+    } else {
+      x = this.scale.width / 2;
+    }
+
+    this.btnRestart.x = x;
 
     this.btnRestart.on("pointerdown", () => {
       // Сначала стопим сцены
@@ -90,16 +109,66 @@ export default class GameOver extends Phaser.Scene {
     });
   }
 
+  drawBtnGetPrize() {
+    if (this.score < this.scoreForWin) {
+      return;
+    }
+
+    this.btnPrize = this.add
+      .image(this.scale.width / 2, 435, ASSETS.btnPrize.key)
+      .setInteractive({ cursor: "pointer" })
+      .setOrigin(0.5, 0);
+
+    let x;
+
+    x = this.scale.width / 2 + this.btnPrize.width / 2 + 15;
+
+    this.btnPrize.x = x;
+
+    this.btnPrize.on("pointerdown", () => {
+      window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+    });
+  }
+
   drawUnicorn() {
+    let unicornAssetKey;
+
+    if (this.score >= this.scoreForWin) {
+      unicornAssetKey = ASSETS.unicornStark.key;
+    } else {
+      unicornAssetKey = ASSETS.unicornMeh.key;
+    }
+
     this.unicorn = this.add
-      .image(this.scale.width / 2 + 14, 413, ASSETS.unicornStark.key)
+      .image(this.scale.width / 2, 413, unicornAssetKey)
       .setOrigin(0, 1);
   }
 
   drawUnicornText() {
-    this.unicornText = this.add
-      .image(315, 221, ASSETS.finalTextRecord.key)
-      .setOrigin(0, 0);
+    let text;
+
+    if (this.score >= this.scoreForWin) {
+      text = `
+      Ого! 
+      Вот это результат!
+      Скорее забирай 
+      свои 30 дней
+      бесплатного 
+      пользования PVS-Studio!`;
+    } else {
+      text = `
+      Увы! Немного не хватило 
+      до подарка. 
+      Попробуй еще раз, 
+      у тебя точно 
+      получится набрать 
+      ${this.scoreForWin} очков в игре!`;
+    }
+
+    this.unicornText = this.add.text(280, 175, text, {
+      fontFamily: "lifeisstrangeru",
+      fontSize: "28px",
+    });
   }
 
   drawLeaderboardLink() {
