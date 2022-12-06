@@ -62,13 +62,13 @@ export default class Player extends Phaser.GameObjects.Container {
   /**
    * Скорость игрока
    */
-  // TODO 200
+  // TODO: 200
   playerSpeed = 300;
 
   /**
    * На сколько мышь ускоряется спустя время
    */
-  // TODO 20
+  // TODO: 20
   deltaSpeed = 20;
 
   /**
@@ -147,8 +147,6 @@ export default class Player extends Phaser.GameObjects.Container {
       case PlayerState.Killed: {
         body.velocity.x *= 0.99;
         body.velocity.x -= 5;
-        body.velocity.y = 0;
-        body.setAccelerationY(10000);
 
         if (body.velocity.x <= 5) {
           this.playerState = PlayerState.Dead;
@@ -269,6 +267,7 @@ export default class Player extends Phaser.GameObjects.Container {
 
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setVelocityX(1000);
+    body.setAccelerationY(0);
     this.toggleJetpack(false);
   }
 
