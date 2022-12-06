@@ -59,6 +59,14 @@ export default class Game extends Phaser.Scene {
    */
   buffX2!: Phaser.Physics.Arcade.Sprite;
   /**
+   * Текст при подборе баффа x2
+   */
+  buffX2PickupText!: BitmapText;
+  /**
+   * Таймер текста при подборе баффа x2
+   */
+  buffX2PickupTextTimeout!: ReturnType<typeof setTimeout>;
+  /**
    * Бафф перерыв
    */
   buffBreak!: Phaser.Physics.Arcade.Sprite;
@@ -69,11 +77,11 @@ export default class Game extends Phaser.Scene {
   /**
    * Таймер баффа неуязвимости
    */
-  buffPvsTimer: ReturnType<typeof setTimeout> = setTimeout(() => {}, 0);
+  buffPvsTimeout!: ReturnType<typeof setTimeout>;
   /**
    * Таймер баффа неуязвимости (мерцания)
    */
-  buffPvsBlinkingTimer: ReturnType<typeof setTimeout> = setTimeout(() => {}, 0);
+  buffPvsBlinkingTimeout!: ReturnType<typeof setTimeout>;
   /**
    * Текст неуязвимости
    */
@@ -126,13 +134,12 @@ export default class Game extends Phaser.Scene {
    * Множитель очков в секунду
    */
   salaryMultiplier = 1;
+  /**
+   * Текст множителя
+   */
+  salaryMultiplierLabel!: BitmapText;
   /** Минимальное расстояние между ништяками */
   overlapMargin = 2;
-
-  // TODO тестовый спрайтовый бафф
-  buffDonutTest!: Phaser.Physics.Arcade.Sprite;
-  // TODO тестовый битмап текст
-  testLabel!: BitmapText;
 
   // Тут можно задавать дефолтные значения
   init() {
@@ -155,8 +162,10 @@ export default class Game extends Phaser.Scene {
     this.drawPlayer();
 
     this.drawScoreLabel();
+    this.drawScoreMultiplierLabel();
     this.drawInvincibilityLabel();
     this.drawMentorLabel();
+    this.drawX2PickupText();
 
     this.setCamera();
 
@@ -292,7 +301,23 @@ export default class Game extends Phaser.Scene {
    */
   drawScoreLabel(): void {
     this.scoreLabel = this.add
-      .bitmapText(30, 30, ASSETS.fontDoubleShadowed.key, `${this.score}`, 72)
+      .bitmapText(30, 35, ASSETS.fontDoubleShadowed.key, `${this.score}`, 72)
+      .setScrollFactor(0);
+  }
+
+  /**
+   * Рисует текст множителя зп
+   */
+  drawScoreMultiplierLabel(): void {
+    const FZ = 42;
+    this.salaryMultiplierLabel = this.add
+      .bitmapText(
+        this.scoreLabel.width + 50,
+        this.scoreLabel.y + this.scoreLabel.height / 2 - FZ / 2,
+        ASSETS.fontPribambasBlack.key,
+        `Х${this.salaryMultiplier}`,
+        FZ
+      )
       .setScrollFactor(0);
   }
 
@@ -301,6 +326,16 @@ export default class Game extends Phaser.Scene {
    */
   updateScoreLabel(): void {
     this.scoreLabel.text = `${this.score}`;
+
+    this.updateScoreMultiplierLabel();
+  }
+
+  /**
+   * Обновляет текст множителя зп
+   */
+  updateScoreMultiplierLabel(): void {
+    this.salaryMultiplierLabel.x = this.scoreLabel.width + 50;
+    this.salaryMultiplierLabel.text = `Х${this.salaryMultiplier}`;
   }
 
   /**
@@ -597,8 +632,30 @@ export default class Game extends Phaser.Scene {
 
     this.playBuffAnimationAndRespawn(ASSETS.buffX2.key);
     this.updateScoreLabel();
+    this.buffX2PickupText.setAlpha(1);
+
+    clearTimeout(this.buffX2PickupTextTimeout);
+    this.buffX2PickupTextTimeout = setTimeout(() => {
+      this.buffX2PickupText.setAlpha(0);
+    }, 3000);
   }
 
+  /**
+   * Рисует текст при подборе X2
+   */
+  drawX2PickupText(): void {
+    this.buffX2PickupText = this.add
+      .bitmapText(
+        this.scale.width / 2,
+        this.worldBoundTop,
+        ASSETS.fontLifeIsStrangeDark.key,
+        `ТЫ ПОЛУЧИЛ ПОВЫШЕНИЕ!`,
+        36
+      )
+      .setOrigin(0.5, 0)
+      .setAlpha(0)
+      .setScrollFactor(0);
+  }
   /**
    * Хэндлер сбора пончика
    */
@@ -633,13 +690,13 @@ export default class Game extends Phaser.Scene {
 
     // Ресетим состояние щита при подборе
     this.player.setPvsShieldBlinking(false);
-    clearTimeout(this.buffPvsTimer);
-    clearTimeout(this.buffPvsBlinkingTimer);
+    clearTimeout(this.buffPvsTimeout);
+    clearTimeout(this.buffPvsBlinkingTimeout);
 
-    this.buffPvsBlinkingTimer = setTimeout(() => {
+    this.buffPvsBlinkingTimeout = setTimeout(() => {
       this.player.setPvsShieldBlinking();
     }, 7000);
-    this.buffPvsTimer = setTimeout(() => {
+    this.buffPvsTimeout = setTimeout(() => {
       this.player.isInvincible = false;
       this.player.toggleShield(false);
       this.player.setPvsShieldBlinking(false);
