@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
+import { createButtonWithGradient } from "../utils/createButtonWithGradient";
 
 const records = [
   {
@@ -449,7 +450,7 @@ export default class Menu extends Phaser.Scene {
     let colRecord = "";
     const offsetTop = 200;
     const fontSize = "18px";
-    const lineSpacing = 4;
+    const lineSpacing = 2;
 
     records.forEach((record, index) => {
       if ((index + 1).toString().length === 1) {
@@ -471,7 +472,7 @@ export default class Menu extends Phaser.Scene {
       })
       .setDepth(-1)
       .setOrigin(0.5, 0);
-    this.leaderboardColNum.lineSpacing = lineSpacing;
+    this.leaderboardColNum.setLineSpacing(lineSpacing);
 
     this.leaderboardColName = this.add
       .text(330 + 100, offsetTop, colName, {
@@ -481,7 +482,7 @@ export default class Menu extends Phaser.Scene {
       })
       .setDepth(-1)
       .setOrigin(0.5, 0);
-    this.leaderboardColName.lineSpacing = lineSpacing;
+    this.leaderboardColName.setLineSpacing(lineSpacing);
 
     this.leaderboardColRecord = this.add
       .text(330 + 100 + 314, offsetTop, colRecord, {
@@ -491,7 +492,7 @@ export default class Menu extends Phaser.Scene {
       })
       .setDepth(-1)
       .setOrigin(0.5, 0);
-    this.leaderboardColRecord.lineSpacing = lineSpacing;
+    this.leaderboardColRecord.setLineSpacing(lineSpacing);
   }
 
   handleKeyboard(): void {

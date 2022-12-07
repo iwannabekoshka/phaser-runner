@@ -120,6 +120,16 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.btnPrize.key, ASSETS.btnPrize.imageUrl);
     // Кнопка Обратно в меню
     this.load.image(ASSETS.btnBackToMenu.key, ASSETS.btnBackToMenu.imageUrl);
+    // Кнопка Скипнуть никнейм
+    this.load.image(
+      ASSETS.btnSkipUsername.key,
+      ASSETS.btnSkipUsername.imageUrl
+    );
+    // Кнопка Сохранить никнейм
+    this.load.image(
+      ASSETS.btnSaveUsername.key,
+      ASSETS.btnSaveUsername.imageUrl
+    );
     // Кубок
     this.load.image(ASSETS.cup.key, ASSETS.cup.imageUrl);
     // Индикатор ментора
@@ -133,6 +143,11 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSETS.tutorial_2.key, ASSETS.tutorial_2.imageUrl);
     // Таблица лидеров
     this.load.image(ASSETS.leaderboard.key, ASSETS.leaderboard.imageUrl);
+    // Таблица лидеров в конце
+    this.load.image(
+      ASSETS.leaderboardFinalScreen.key,
+      ASSETS.leaderboardFinalScreen.imageUrl
+    );
     // Таблица лидеров
     this.load.image(ASSETS.deadscreen.key, ASSETS.deadscreen.imageUrl);
     // Победный единорог как Тони Старк

@@ -13,8 +13,8 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 2,
-    xTo: 4,
+    xFrom: 0,
+    xTo: 1,
   },
   {
     name: ASSETS.buffPvs.key,
@@ -301,7 +301,7 @@ export default class Game extends Phaser.Scene {
    */
   drawScoreLabel(): void {
     this.scoreLabel = this.add
-      .text(30, 35, `${this.score}`, {
+      .text(50, 35, `${this.score}`, {
         fontFamily: "Pribambas",
         fontSize: "72px",
         color: "#00a6ff",
@@ -519,7 +519,6 @@ export default class Game extends Phaser.Scene {
   }
 
   spawnBuff2(buff: string, specificCoords?: { x: number; y: number }) {
-    console.log("spawnBuff2");
     const { leftEdge, rightEdge } = this.getGameEdgesCoordinates();
     // @ts-ignore
     const { xFrom, xTo } = overlapEntities.find((e) => e.name === buff);
@@ -684,14 +683,16 @@ export default class Game extends Phaser.Scene {
   async handleBreakCollect() {
     this.playBuffAnimationAndRespawn(ASSETS.buffBreak.key);
 
+    const oldSalary = this.salary;
+
     this.player.isInvincible = true;
-    this.salary = 2;
+    this.salary *= 2;
     this.player.setDonutAnimation(true);
     this.player.isDonut = true;
 
     this.player.stopPlayerByBreak().then(() => {
       this.player.isInvincible = false;
-      this.salary = 1;
+      this.salary = oldSalary;
       this.player.isDonut = false;
     });
 

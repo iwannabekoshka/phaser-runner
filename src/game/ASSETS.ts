@@ -175,6 +175,10 @@ const ASSETS = {
     key: "leaderboard",
     imageUrl: "/game/interface/leaderboard/leaderboard.png",
   },
+  leaderboardFinalScreen: {
+    key: "leaderboardFinalScreen",
+    imageUrl: "/game/interface/leaderboard/leaderboard-finalscreen.png",
+  },
   btnAgain: {
     key: "btnAgain",
     imageUrl: "/game/interface/btn-again.png",
@@ -191,9 +195,17 @@ const ASSETS = {
     key: "btnPrize",
     imageUrl: "/game/interface/btn-prize.png",
   },
+  btnSkipUsername: {
+    key: "btnSkipUsername",
+    imageUrl: "/game/interface/deadscreen/btn-skip-username.png",
+  },
+  btnSaveUsername: {
+    key: "btnSaveUsername",
+    imageUrl: "/game/interface/deadscreen/btn-save-username.png",
+  },
   deadscreen: {
     key: "deadscreen",
-    imageUrl: "/game/interface/deadscreen/dead-screen.svg",
+    imageUrl: "/game/interface/deadscreen/dead-screen.png",
   },
   unicornStark: {
     key: "unicornStark",

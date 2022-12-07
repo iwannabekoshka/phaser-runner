@@ -3,6 +3,52 @@ import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import BitmapText = Phaser.GameObjects.BitmapText;
 
+// DEMO:
+const RECORDS = [
+  {
+    name: "User",
+    record: "1234567890",
+  },
+  {
+    name: "UsernameUserUser",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+  {
+    name: "Username",
+    record: "1234567890",
+  },
+];
+
+const LOCAL_STORAGE_USERNAME = "pvsStudioGameUsername";
+
 export default class GameOver extends Phaser.Scene {
   constructor() {
     super(SCENES.end);
@@ -21,12 +67,17 @@ export default class GameOver extends Phaser.Scene {
   /**
    * Текст счета
    */
-  scoreText!: BitmapText;
+  scoreText!: Phaser.GameObjects.Text;
 
   /**
    * Количество очков чтоб получить триал
    */
-  scoreForWin = 1000;
+  scoreForWin = 1;
+
+  /**
+   * Ссылка на триал
+   */
+  urlForWinner = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
   /**
    * Кнопка Начать заново
@@ -53,7 +104,42 @@ export default class GameOver extends Phaser.Scene {
    */
   leaderboardLink!: Phaser.GameObjects.Image;
 
+  /**
+   * Картинка с синим фоном и надписью Работник месяца
+   */
+  leaderboard!: Phaser.GameObjects.Image;
+
+  /**
+   * Никнейм юзера
+   */
+  username!: string | null;
+
+  /**
+   * Форма с инпут никнейма юзера
+   */
+  form!: Phaser.GameObjects.DOMElement;
+
+  /**
+   * Текст над формой
+   */
+  formText!: Phaser.GameObjects.Text;
+
+  /**
+   * Кнопка Скипнуть ввод никнейма
+   */
+  btnSkipUsername!: Phaser.GameObjects.Image;
+
+  /**
+   * Кнопка Сохранить никнейм
+   */
+  btnSaveUsername!: Phaser.GameObjects.Image;
+
+  preload() {
+    this.load.html("input-text", "input-text.html");
+  }
+
   init(data: any) {
+    this.username = localStorage.getItem(LOCAL_STORAGE_USERNAME);
     this.score = data.score;
   }
 
@@ -74,14 +160,21 @@ export default class GameOver extends Phaser.Scene {
   }
 
   drawScore() {
+    // Shadow
+    this.add
+      .text(this.scale.width / 2 + 10, 160, `${this.score}`, {
+        fontFamily: "Pribambas",
+        fontSize: "50px",
+        color: "#677AA0",
+      })
+      .setOrigin(0.5)
+      .setAlpha(0.65);
+
     this.scoreText = this.add
-      .bitmapText(
-        this.scale.width / 2 + 10,
-        163,
-        ASSETS.fontPribambasWhiteShadowed.key,
-        `${this.score}`,
-        50
-      )
+      .text(this.scale.width / 2 + 10, 158, `${this.score}`, {
+        fontFamily: "Pribambas",
+        fontSize: "50px",
+      })
       .setOrigin(0.5);
   }
 
@@ -126,7 +219,7 @@ export default class GameOver extends Phaser.Scene {
     this.btnPrize.x = x;
 
     this.btnPrize.on("pointerdown", () => {
-      window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+      window.open(this.urlForWinner, "_blank")?.focus();
     });
   }
 
@@ -162,7 +255,7 @@ export default class GameOver extends Phaser.Scene {
       Попробуй еще раз, 
       у тебя точно 
       получится набрать 
-      ${this.scoreForWin} очков в игре!`;
+      $${this.scoreForWin} в игре!`;
     }
 
     this.unicornText = this.add.text(280, 175, text, {
@@ -178,7 +271,152 @@ export default class GameOver extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     this.leaderboardLink.on("pointerdown", () => {
-      alert("leaderboard");
+      this.unicorn.setDepth(-10).setAlpha(0);
+      this.unicornText.setDepth(-10).setAlpha(0);
+      this.leaderboardLink.setDepth(-10).setAlpha(0);
+
+      if (this.username) {
+        this.drawLeaderboard();
+      } else {
+        this.drawUsernameForm();
+      }
     });
+  }
+
+  drawUsernameForm() {
+    this.btnRestart.setDepth(-10).setAlpha(0);
+
+    this.form = this.add
+      .dom(this.scale.width / 2, 340)
+      .createFromCache("input-text")
+      .setOrigin(0.5);
+    // @ts-ignore
+    this.form.node
+      .getElementsByTagName("form")[0]
+      .addEventListener("submit", this.submitUsernameFormHandler);
+
+    const text = `Сохраним твой результат? Чтобы все \n знали кто такой молодец`;
+    this.formText = this.add
+      .text(
+        this.scale.width / 2,
+        this.form.y - this.form.height / 2 - 30,
+        text,
+        {
+          fontFamily: "lifeisstrangeru",
+          fontSize: "28px",
+          color: "white",
+          align: "center",
+        }
+      )
+      .setOrigin(0.5, 1);
+
+    this.btnSkipUsername = this.add
+      .image(412, 435, ASSETS.btnSkipUsername.key)
+      .setInteractive({ cursor: "pointer" })
+      .setOrigin(0.5, 0);
+    this.btnSkipUsername.on("pointerdown", () => {
+      this.removeForm();
+      this.drawLeaderboard();
+    });
+
+    this.btnSaveUsername = this.add
+      .image(698, 435, ASSETS.btnSaveUsername.key)
+      .setInteractive({ cursor: "pointer" })
+      .setOrigin(0.5, 0);
+    this.btnSaveUsername.on("pointerdown", () => {
+      this.submitUsernameFormHandler();
+    });
+  }
+
+  removeForm() {
+    this.form.setDepth(-10).setAlpha(0);
+    this.formText.setDepth(-10).setAlpha(0);
+    this.btnSkipUsername.setDepth(-10).setAlpha(0);
+    this.btnSaveUsername.setDepth(-10).setAlpha(0);
+  }
+
+  submitUsernameFormHandler(e?: SubmitEvent) {
+    let username;
+
+    if (e) {
+      e.preventDefault();
+
+      // @ts-ignore
+      username = e.target.querySelector("input").value;
+    } else {
+      username = this.form.node.getElementsByTagName("input")[0].value;
+    }
+
+    if (username.trim().length < 3) {
+      return;
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
+
+    this.removeForm();
+    this.drawLeaderboard();
+  }
+
+  /**
+   * Рисует таблицу лидеров
+   */
+  drawLeaderboard() {
+    this.btnRestart.setDepth(10).setAlpha(1);
+
+    this.leaderboard = this.add
+      .image(
+        this.scale.width / 2,
+        this.scale.height / 2 - 40,
+        ASSETS.leaderboardFinalScreen.key
+      )
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+
+    let colNum = "";
+    let colName = "";
+    let colRecord = "";
+
+    const offsetTop = 190;
+    const fontSize = "18px";
+    const lineSpacing = 2;
+
+    RECORDS.forEach((record, index) => {
+      if ((index + 1).toString().length === 1) {
+        colNum += `0${index + 1}.\n`;
+      } else {
+        colNum += `${index + 1}.\n`;
+      }
+
+      colName += `${record.name}\n`;
+
+      colRecord += `$${record.record}\n`;
+    });
+
+    const leaderboardColNum = this.add
+      .text(330, offsetTop, colNum, {
+        fontFamily: "lifeisstrangeru",
+        color: "white",
+        fontSize,
+      })
+      .setOrigin(0.5, 0);
+    leaderboardColNum.setLineSpacing(lineSpacing);
+
+    const leaderboardColName = this.add
+      .text(330 + 100, offsetTop, colName, {
+        fontFamily: "lifeisstrangeru",
+        color: "white",
+        fontSize,
+      })
+      .setOrigin(0.5, 0);
+    leaderboardColName.setLineSpacing(lineSpacing);
+
+    const leaderboardColRecord = this.add
+      .text(330 + 100 + 314, offsetTop, colRecord, {
+        fontFamily: "lifeisstrangeru",
+        color: "white",
+        fontSize,
+      })
+      .setOrigin(0.5, 0);
+    leaderboardColRecord.setLineSpacing(lineSpacing);
   }
 }
