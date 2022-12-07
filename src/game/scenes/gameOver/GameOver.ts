@@ -135,7 +135,8 @@ export default class GameOver extends Phaser.Scene {
   btnSaveUsername!: Phaser.GameObjects.Image;
 
   preload() {
-    this.load.html("input-text", "input-text.html");
+    const folder = import.meta.env.DEV ? "public" : "";
+    this.load.html("input-text", `${folder}/input-text.html`);
   }
 
   init(data: any) {
