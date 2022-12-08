@@ -335,11 +335,20 @@ export default class Menu extends Phaser.Scene {
         this.scale.stopFullscreen();
         // @ts-ignore
         document.webkitExitFullscreen();
+
+        // @ts-ignore
+        if (document.webkitExitFullscreen) {
+          // @ts-ignore
+          document.webkitExitFullscreen();
+        }
       } else {
         try {
           this.scale.startFullscreen();
           // @ts-ignore
-          document.documentElement.webkitRequestFullscreen();
+          if (document.webkitRequestFullscreen) {
+            // @ts-ignore
+            document.webkitRequestFullscreen();
+          }
         } catch (e) {
           alert(e);
         }
