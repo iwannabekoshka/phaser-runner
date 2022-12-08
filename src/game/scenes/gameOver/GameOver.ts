@@ -360,7 +360,7 @@ export default class GameOver extends Phaser.Scene {
       username = this.form.node.getElementsByTagName("input")[0].value;
     }
 
-    if (username.trim().length < 3) {
+    if (username.trim().length < 3 || username.trim().length > 15) {
       return;
     }
 
