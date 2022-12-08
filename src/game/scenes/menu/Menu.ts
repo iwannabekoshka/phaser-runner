@@ -388,12 +388,12 @@ export default class Menu extends Phaser.Scene {
     this.highscoreText = this.add
       .text(
         this.scale.width - 75,
-        this.scale.height - this.offsetScreenY,
+        this.scale.height - this.offsetScreenY - 30,
         `${highscore}`,
         {
           fontFamily: "Luckiest Guy",
           color: "black",
-          fontSize: "30px",
+          fontSize: "42px",
         }
       )
       .setOrigin(1, 0.5);
@@ -401,7 +401,7 @@ export default class Menu extends Phaser.Scene {
     this.cup = this.add
       .image(
         this.highscoreText.x - this.highscoreText.width - 100,
-        this.scale.height - this.offsetScreenY,
+        this.scale.height - this.offsetScreenY - 30,
         ASSETS.cup.key
       )
       .setOrigin(0, 0.5)

@@ -299,8 +299,8 @@ export default class GameOver extends Phaser.Scene {
     // @ts-ignore
     this.form.node
       .getElementsByTagName("form")[0]
-      .addEventListener("submit", () => {
-        this.submitUsernameFormHandler;
+      .addEventListener("submit", (e) => {
+        this.submitUsernameFormHandler(e);
         this.removeForm();
         this.drawLeaderboard();
       });
