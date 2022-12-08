@@ -334,7 +334,11 @@ export default class Menu extends Phaser.Scene {
       if (this.scale.isFullscreen) {
         this.scale.stopFullscreen();
       } else {
-        this.scale.startFullscreen();
+        try {
+          this.scale.startFullscreen();
+        } catch (e) {
+          alert(e);
+        }
       }
 
       // document
