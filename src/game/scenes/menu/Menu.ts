@@ -333,9 +333,13 @@ export default class Menu extends Phaser.Scene {
     this.btnFullscreen.on("pointerup", () => {
       if (this.scale.isFullscreen) {
         this.scale.stopFullscreen();
+        // @ts-ignore
+        document.webkitExitFullscreen();
       } else {
         try {
           this.scale.startFullscreen();
+          // @ts-ignore
+          document.documentElement.webkitRequestFullscreen();
         } catch (e) {
           alert(e);
         }
