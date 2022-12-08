@@ -9,7 +9,10 @@ export default new Phaser.Game({
   scale: {
     mode: Phaser.Scale.FIT,
     parent: <HTMLDivElement>document.querySelector("#canvas-container"),
-    autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    fullscreenTarget: <HTMLDivElement>(
+      document.querySelector("#canvas-container")
+    ),
+    autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1110,
     height: 624,
   },

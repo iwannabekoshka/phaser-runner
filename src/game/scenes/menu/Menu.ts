@@ -162,9 +162,9 @@ export default class Menu extends Phaser.Scene {
     this.drawBtnLeaderboard();
     // this.drawBtnMute();
     this.drawBtnInfo();
-    if (window.screen.width < 768) {
-      // this.drawBtnFullscreen();
-    }
+    // if (window.screen.width < 768) {
+    this.drawBtnFullscreen();
+    // }
     this.drawHighScore();
     this.drawTutorial();
     this.drawLeaderboard();
@@ -330,14 +330,18 @@ export default class Menu extends Phaser.Scene {
       .setOrigin(1, 0)
       .setScale(this.assetsScale);
 
-    this.btnFullscreen.on("pointerdown", () => {
-      // if (this.scale.isFullscreen) {
-      //   this.scale.stopFullscreen();
-      // } else {
-      //   this.scale.startFullscreen();
-      // }
+    this.btnFullscreen.on("pointerup", () => {
+      if (this.scale.isFullscreen) {
+        this.scale.stopFullscreen();
+      } else {
+        this.scale.startFullscreen();
+      }
 
-      // return;
+      // document
+      //   .querySelector("#canvas-container")!
+      //   .classList.toggle("fullscreen");
+
+      return;
 
       const aspectRatio = window.innerHeight / window.innerWidth;
       const deviceClass = aspectRatio > 0.51 ? "short" : "long";
