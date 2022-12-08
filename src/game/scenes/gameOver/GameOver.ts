@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import BitmapText = Phaser.GameObjects.BitmapText;
+import { LOCAL_STORAGE_SCORE, LOCAL_STORAGE_USERNAME } from "../../CONSTS";
 
 // DEMO:
 const RECORDS = [
@@ -46,8 +47,6 @@ const RECORDS = [
     record: "1234567890",
   },
 ];
-
-const LOCAL_STORAGE_USERNAME = "pvsStudioGameUsername";
 
 export default class GameOver extends Phaser.Scene {
   constructor() {
@@ -142,6 +141,12 @@ export default class GameOver extends Phaser.Scene {
   init(data: any) {
     this.username = localStorage.getItem(LOCAL_STORAGE_USERNAME);
     this.score = data.score;
+
+    const prevHighScore = localStorage.getItem(LOCAL_STORAGE_SCORE) || 0;
+
+    if (this.score > prevHighScore) {
+      localStorage.setItem(LOCAL_STORAGE_SCORE, this.score.toString());
+    }
   }
 
   create() {
@@ -294,7 +299,11 @@ export default class GameOver extends Phaser.Scene {
     // @ts-ignore
     this.form.node
       .getElementsByTagName("form")[0]
-      .addEventListener("submit", this.submitUsernameFormHandler);
+      .addEventListener("submit", () => {
+        this.submitUsernameFormHandler;
+        this.removeForm();
+        this.drawLeaderboard();
+      });
 
     const text = `Сохраним твой результат? Чтобы все \n знали кто такой молодец`;
     this.formText = this.add
@@ -326,6 +335,9 @@ export default class GameOver extends Phaser.Scene {
       .setOrigin(0.5, 0);
     this.btnSaveUsername.on("pointerdown", () => {
       this.submitUsernameFormHandler();
+
+      this.removeForm();
+      this.drawLeaderboard();
     });
   }
 
@@ -353,9 +365,6 @@ export default class GameOver extends Phaser.Scene {
     }
 
     localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
-
-    this.removeForm();
-    this.drawLeaderboard();
   }
 
   /**

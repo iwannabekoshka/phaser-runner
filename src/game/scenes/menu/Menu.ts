@@ -2,6 +2,8 @@ import * as Phaser from "phaser";
 import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import { createButtonWithGradient } from "../utils/createButtonWithGradient";
+import game from "../../game";
+import { LOCAL_STORAGE_SCORE } from "../../CONSTS";
 
 const records = [
   {
@@ -161,7 +163,7 @@ export default class Menu extends Phaser.Scene {
     // this.drawBtnMute();
     this.drawBtnInfo();
     if (window.screen.width < 768) {
-      this.drawBtnFullscreen();
+      // this.drawBtnFullscreen();
     }
     this.drawHighScore();
     this.drawTutorial();
@@ -335,6 +337,8 @@ export default class Menu extends Phaser.Scene {
       //   this.scale.startFullscreen();
       // }
 
+      // return;
+
       const aspectRatio = window.innerHeight / window.innerWidth;
       const deviceClass = aspectRatio > 0.51 ? "short" : "long";
 
@@ -375,31 +379,33 @@ export default class Menu extends Phaser.Scene {
   }
 
   drawHighScore() {
-    this.cup = this.add
-      .image(
-        this.scale.width / 2 + this.btnStart.width / 2 + 77 * this.assetsScale,
-        this.scale.height - this.offsetScreenY,
-        ASSETS.cup.key
-      )
-      .setOrigin(0, 0.5)
-      .setScale(this.assetsScale);
+    const highscore = localStorage.getItem(LOCAL_STORAGE_SCORE) || 0;
+
+    if (highscore === 0) {
+      return;
+    }
 
     this.highscoreText = this.add
       .text(
-        this.scale.width / 2 +
-          this.btnStart.width / 2 +
-          77 * this.assetsScale +
-          this.cup.width * this.assetsScale +
-          30 * this.assetsScale,
+        this.scale.width - 75,
         this.scale.height - this.offsetScreenY,
-        "1234567890",
+        `${highscore}`,
         {
           fontFamily: "Luckiest Guy",
           color: "black",
           fontSize: "30px",
         }
       )
-      .setOrigin(0, 0.5);
+      .setOrigin(1, 0.5);
+
+    this.cup = this.add
+      .image(
+        this.highscoreText.x - this.highscoreText.width - 100,
+        this.scale.height - this.offsetScreenY,
+        ASSETS.cup.key
+      )
+      .setOrigin(0, 0.5)
+      .setScale(this.assetsScale);
   }
 
   /**
