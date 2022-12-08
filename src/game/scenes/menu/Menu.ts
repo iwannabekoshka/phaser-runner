@@ -170,6 +170,14 @@ export default class Menu extends Phaser.Scene {
     this.drawLeaderboard();
     // this.drawBtnSubscribe();
     this.drawBtnBack();
+
+    window.addEventListener("orientationchange", (event) => {
+      const orientationType = event.target.screen.orientation;
+
+      if (orientationType.includes("landscape")) {
+        document.querySelector("#canvas-container")?.scrollIntoView(true);
+      }
+    });
   }
 
   // Отрабатывает на каждый тик
