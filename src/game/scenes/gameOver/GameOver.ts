@@ -202,7 +202,7 @@ export default class GameOver extends Phaser.Scene {
 
     this.btnRestart.x = x;
 
-    this.btnRestart.on("pointerdown", () => {
+    this.btnRestart.on("pointerup", () => {
       // Сначала стопим сцены
       this.scene.stop(SCENES.end);
 
@@ -226,7 +226,7 @@ export default class GameOver extends Phaser.Scene {
 
     this.btnPrize.x = x;
 
-    this.btnPrize.on("pointerdown", () => {
+    this.btnPrize.on("pointerup", () => {
       window.open(this.urlForWinner, "_blank")?.focus();
     });
   }
@@ -278,7 +278,7 @@ export default class GameOver extends Phaser.Scene {
       .setInteractive({ cursor: "pointer" })
       .setOrigin(0.5, 0);
 
-    this.leaderboardLink.on("pointerdown", () => {
+    this.leaderboardLink.on("pointerup", () => {
       this.unicorn.setDepth(-10).setAlpha(0);
       this.unicornText.setDepth(-10).setAlpha(0);
       this.leaderboardLink.setDepth(-10).setAlpha(0);
@@ -293,6 +293,7 @@ export default class GameOver extends Phaser.Scene {
 
   drawUsernameForm() {
     this.btnRestart.setDepth(-10).setAlpha(0);
+    this.btnRestart.disableInteractive();
 
     this.form = this.add
       .dom(this.scale.width / 2, 340)
@@ -324,16 +325,17 @@ export default class GameOver extends Phaser.Scene {
       .image(412, 435, ASSETS.btnSkipUsername.key)
       .setInteractive({ cursor: "pointer" })
       .setOrigin(0.5, 0);
-    this.btnSkipUsername.on("pointerdown", () => {
+    this.btnSkipUsername.on("pointerup", () => {
       this.removeForm();
       this.drawLeaderboard();
+      setTimeout(() => this.btnRestart.setInteractive(), 100);
     });
 
     this.btnSaveUsername = this.add
       .image(698, 435, ASSETS.btnSaveUsername.key)
       .setInteractive({ cursor: "pointer" })
       .setOrigin(0.5, 0);
-    this.btnSaveUsername.on("pointerdown", () => {
+    this.btnSaveUsername.on("pointerup", () => {
       this.submitUsernameFormHandler();
     });
   }
@@ -364,6 +366,7 @@ export default class GameOver extends Phaser.Scene {
     localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
     this.thisScene.removeForm();
     this.thisScene.drawLeaderboard();
+    this.btnRestart.setInteractive();
   }
 
   /**
