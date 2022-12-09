@@ -170,9 +170,13 @@ export default class Menu extends Phaser.Scene {
     this.drawBtnLeaderboard();
     // this.drawBtnMute();
     this.drawBtnInfo();
-    // if (window.screen.width < 768) {
-    this.drawBtnFullscreen();
-    // }
+
+    if (
+      /Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    ) {
+      this.drawBtnFullscreen();
+    }
+
     this.drawHighScore();
     this.drawLeaderboard();
     // this.drawBtnSubscribe();
