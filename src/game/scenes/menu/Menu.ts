@@ -155,7 +155,7 @@ export default class Menu extends Phaser.Scene {
   // Создание всего и вся
   create() {
     console.log("menu");
-    // game.input.touch.capture = false;
+    game.input.touch.capture = false;
 
     this.drawBg();
     this.drawLogoText();
