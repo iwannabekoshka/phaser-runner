@@ -3,7 +3,6 @@ import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import { IGameEdgesCoordinates } from "../../interfaces/IGameEdgesCoordinates";
 import Player, { PlayerState } from "./Player";
-import BitmapText = Phaser.GameObjects.BitmapText;
 
 const overlapEntities = [
   {

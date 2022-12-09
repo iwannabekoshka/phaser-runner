@@ -5,7 +5,7 @@ import Preloader from "./scenes/preloader/Preloader";
 import GameOver from "./scenes/gameOver/GameOver";
 
 export default new Phaser.Game({
-  type: Phaser.WEBGL,
+  type: Phaser.CANVAS,
   scale: {
     mode: Phaser.Scale.FIT,
     parent: <HTMLDivElement>document.querySelector("#canvas-container"),
