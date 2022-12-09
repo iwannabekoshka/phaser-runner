@@ -22,8 +22,8 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 10,
-    xTo: 10,
+    xFrom: 0,
+    xTo: 0,
   },
   {
     name: ASSETS.coin.key,
@@ -96,7 +96,7 @@ export default class Game extends Phaser.Scene {
   /**
    * Картинка ментора когда подобран
    */
-  mentorIndicator!: Phaser.GameObjects.Image;
+  mentorIndicator!: Phaser.GameObjects.Sprite;
   /**
    * Таймер баффа ментора
    */
@@ -758,9 +758,9 @@ export default class Game extends Phaser.Scene {
    */
   drawMentorIndicator(): void {
     this.mentorIndicator = this.add
-      .image(this.scale.width - 40, 40, ASSETS.mentorIndicator.key)
+      .sprite(this.scale.width - 40, 40, ASSETS.mentorIndicator.key)
       .setOrigin(1, 0)
-      .setScale(0.8)
+      .setScale(0.6)
       .setAlpha(0)
       .setScrollFactor(0);
   }
@@ -770,6 +770,7 @@ export default class Game extends Phaser.Scene {
    */
   updateMentorLabel(): void {
     this.mentorIndicator.alpha = this.isMentor ? 1 : 0;
+    this.mentorIndicator.play(ASSETS.mentorIndicator.animations.idle);
   }
 
   /**

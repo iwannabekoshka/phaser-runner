@@ -78,7 +78,12 @@ const ASSETS = {
   },
   mentorIndicator: {
     key: "mentorIndicator",
-    imageUrl: "/game/office/buffs/mentor/mentor-top-right.png",
+    imageUrl: "game/office/buffs/mentor/mentor-indicator/mentor-indicator.png",
+    dataFileUrl:
+      "game/office/buffs/mentor/mentor-indicator/mentor-indicator.json",
+    animations: {
+      idle: "animationMentorIndicatorIdle",
+    },
   },
   debuffBug: {
     key: "debuffBug",

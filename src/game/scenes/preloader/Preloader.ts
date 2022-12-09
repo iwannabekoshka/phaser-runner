@@ -60,6 +60,12 @@ export default class Preloader extends Phaser.Scene {
       ASSETS.debuffBugDancing.imageUrl,
       ASSETS.debuffBugDancing.dataFileUrl
     );
+    // Ментор индикатор
+    this.load.atlas(
+      ASSETS.mentorIndicator.key,
+      ASSETS.mentorIndicator.imageUrl,
+      ASSETS.mentorIndicator.dataFileUrl
+    );
 
     // Неприятности
     this.load.image(ASSETS.debuffBug.key, ASSETS.debuffBug.imageUrl);
@@ -184,7 +190,6 @@ export default class Preloader extends Phaser.Scene {
     this.createAnimationPlayerPvsShield();
     this.createAnimationPlayerPvsShieldBlink();
     this.createAnimationPlayerDonut();
-    this.createAnimationBugDancing();
 
     // Анимации баффов
     this.createAnimationBuffBreakIdle();
@@ -197,6 +202,10 @@ export default class Preloader extends Phaser.Scene {
     this.createAnimationBuffPvsPop();
     this.createAnimationBuffMentorIdle();
     this.createAnimationBuffMentorPop();
+    this.createAnimationMentorIndicatorIdle();
+
+    // Анимации неприятностей
+    this.createAnimationBugDancing();
 
     // После загрузки ассетов идем в меню
     this.scene.start(SCENES.menu);
@@ -514,6 +523,21 @@ export default class Preloader extends Phaser.Scene {
       ],
       frameRate: 13,
       repeat: -1,
+    });
+  }
+
+  createAnimationMentorIndicatorIdle() {
+    this.anims.create({
+      key: ASSETS.mentorIndicator.animations.idle,
+      frames: [
+        { key: ASSETS.mentorIndicator.key, frame: "mentor-01" },
+        { key: ASSETS.mentorIndicator.key, frame: "mentor-02" },
+        { key: ASSETS.mentorIndicator.key, frame: "mentor-03" },
+        { key: ASSETS.mentorIndicator.key, frame: "mentor-04" },
+        { key: ASSETS.mentorIndicator.key, frame: "mentor-05" },
+      ],
+      frameRate: 10,
+      repeat: 0,
     });
   }
 }
