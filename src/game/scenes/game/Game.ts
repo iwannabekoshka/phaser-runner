@@ -12,18 +12,18 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 100,
-    xTo: 100,
+    xFrom: 10,
+    xTo: 10,
   },
   {
     name: ASSETS.buffPvs.key,
-    xFrom: 100,
-    xTo: 100,
+    xFrom: 10,
+    xTo: 10,
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 100,
-    xTo: 100,
+    xFrom: 10,
+    xTo: 10,
   },
   {
     name: ASSETS.coin.key,
@@ -612,7 +612,7 @@ export default class Game extends Phaser.Scene {
 
       if (overlap) {
         // @ts-ignore
-        this.spawnBuff2(buff);
+        this.spawnBuff2(buff, { x: this[buff].x + 50, y: this[buff].y });
         // this.spawnBuff2(buff, { x: this[entityName].x + 10, y: this[buff].y });
       }
     });
