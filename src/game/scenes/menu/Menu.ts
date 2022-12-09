@@ -155,7 +155,14 @@ export default class Menu extends Phaser.Scene {
   // Создание всего и вся
   create() {
     console.log("menu");
-    game.input.touch.capture = false;
+
+    if (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    ) {
+      game.input.touch.capture = false;
+    }
 
     this.drawBg();
     this.drawLogoText();
@@ -170,18 +177,6 @@ export default class Menu extends Phaser.Scene {
     this.drawLeaderboard();
     // this.drawBtnSubscribe();
     this.drawBtnBack();
-
-    window.addEventListener("orientationchange", (event) => {
-      // @ts-ignore
-      const orientationType = event.target.screen.orientation.type;
-
-      if (orientationType.includes("landscape")) {
-        document
-          .querySelector("#canvas-container")
-          ?.scrollIntoView({ block: "start" });
-        console.log("here");
-      }
-    });
   }
 
   // Отрабатывает на каждый тик
