@@ -259,7 +259,7 @@ export default class Player extends Phaser.GameObjects.Container {
    */
   kill() {
     // DEMO: убрать после дебага
-    // return;
+    return;
 
     if (this.playerState !== PlayerState.Running) {
       return;

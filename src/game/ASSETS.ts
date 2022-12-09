@@ -100,6 +100,14 @@ const ASSETS = {
     key: "debuffTestFailed",
     imageUrl: "/game/office/debuffs/test_failed.png",
   },
+  debuffBugDancing: {
+    key: "debuffBugDancing",
+    imageUrl: "/game/office/debuffs/bug/bug.png",
+    dataFileUrl: "/game/office/debuffs/bug/bug.json",
+    animations: {
+      idle: "animationDebuffBugIdle",
+    },
+  },
   fontArcade: {
     key: "fontArcade",
     imageUrl: "/game/fonts/arcade/arcade.png",

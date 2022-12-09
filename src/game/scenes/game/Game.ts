@@ -13,18 +13,18 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 0,
-    xTo: 1,
+    xFrom: 500,
+    xTo: 500,
   },
   {
     name: ASSETS.buffPvs.key,
-    xFrom: 2,
-    xTo: 4,
+    xFrom: 500,
+    xTo: 500,
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 2,
-    xTo: 4,
+    xFrom: 500,
+    xTo: 500,
   },
   {
     name: ASSETS.coin.key,
@@ -370,30 +370,31 @@ export default class Game extends Phaser.Scene {
 
     // Рандомное количество дебаффов
     // DEMO:
-    const numDebuffs = Phaser.Math.Between(1, 4);
-    // const numDebuffs = 30;
+    // const numDebuffs = Phaser.Math.Between(1, 4);
+    const numDebuffs = 1000;
 
     const debuffsAssets = [
       {
-        key: "debuffBug",
+        key: "debuffBugDancing",
         scale: 1,
+        animation: "animationDebuffBugIdle",
       },
-      {
-        key: "debuffDeadline",
-        scale: 0.75,
-      },
-      {
-        key: "debuffDebt",
-        scale: 1,
-      },
-      {
-        key: "debuffDeploy",
-        scale: 1,
-      },
-      {
-        key: "debuffTestFailed",
-        scale: 1,
-      },
+      // {
+      //   key: "debuffDeadline",
+      //   scale: 0.75,
+      // },
+      // {
+      //   key: "debuffDebt",
+      //   scale: 1,
+      // },
+      // {
+      //   key: "debuffDeploy",
+      //   scale: 1,
+      // },
+      // {
+      //   key: "debuffTestFailed",
+      //   scale: 1,
+      // },
     ];
 
     for (let i = 0; i < numDebuffs; i++) {
@@ -409,6 +410,11 @@ export default class Game extends Phaser.Scene {
         )
         .setScale(randomAsset.scale)
         .setOrigin(0.5, 1) as Phaser.Physics.Arcade.Sprite;
+
+      if (randomAsset.animation) {
+        // @ts-ignore
+        debuff.play(ASSETS[randomAsset.key].animations.idle).setScale(0.5);
+      }
 
       debuff.setY(this.scale.height - this.worldBoundBottom);
 
@@ -430,8 +436,8 @@ export default class Game extends Phaser.Scene {
 
       // move x a random amount
       // DEMO:
-      x += debuff.width * Phaser.Math.Between(4, 6);
-      // x += debuff.width;
+      // x += debuff.width * Phaser.Math.Between(4, 6);
+      x += 100;
     }
   }
 

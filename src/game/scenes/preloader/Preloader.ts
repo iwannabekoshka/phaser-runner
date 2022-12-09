@@ -54,6 +54,12 @@ export default class Preloader extends Phaser.Scene {
       ASSETS.playerPvsShield.imageUrl,
       ASSETS.playerPvsShield.dataFileUrl
     );
+    // Жук танцует
+    this.load.atlas(
+      ASSETS.debuffBugDancing.key,
+      ASSETS.debuffBugDancing.imageUrl,
+      ASSETS.debuffBugDancing.dataFileUrl
+    );
 
     // Неприятности
     this.load.image(ASSETS.debuffBug.key, ASSETS.debuffBug.imageUrl);
@@ -178,6 +184,7 @@ export default class Preloader extends Phaser.Scene {
     this.createAnimationPlayerPvsShield();
     this.createAnimationPlayerPvsShieldBlink();
     this.createAnimationPlayerDonut();
+    this.createAnimationBugDancing();
 
     // Анимации баффов
     this.createAnimationBuffBreakIdle();
@@ -483,6 +490,29 @@ export default class Preloader extends Phaser.Scene {
         { key: ASSETS.playerPvsShield.key, frame: "hero_bubble_ending-10.png" },
       ],
       frameRate: 6,
+      repeat: -1,
+    });
+  }
+
+  createAnimationBugDancing() {
+    this.anims.create({
+      key: ASSETS.debuffBugDancing.animations.idle,
+      frames: [
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_1" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_2" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_3" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_4" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_5" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_6" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_7" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_8" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_9" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_10" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_11" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_12" },
+        { key: ASSETS.debuffBugDancing.key, frame: "bug_13" },
+      ],
+      frameRate: 13,
       repeat: -1,
     });
   }

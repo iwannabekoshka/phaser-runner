@@ -155,6 +155,7 @@ export default class Menu extends Phaser.Scene {
   // Создание всего и вся
   create() {
     console.log("menu");
+    // game.input.touch.capture = false;
 
     this.drawBg();
     this.drawLogoText();
@@ -166,16 +167,19 @@ export default class Menu extends Phaser.Scene {
     this.drawBtnFullscreen();
     // }
     this.drawHighScore();
-    this.drawTutorial();
     this.drawLeaderboard();
     // this.drawBtnSubscribe();
     this.drawBtnBack();
 
     window.addEventListener("orientationchange", (event) => {
-      const orientationType = event.target.screen.orientation;
+      // @ts-ignore
+      const orientationType = event.target.screen.orientation.type;
 
       if (orientationType.includes("landscape")) {
-        document.querySelector("#canvas-container")?.scrollIntoView(true);
+        document
+          .querySelector("#canvas-container")
+          ?.scrollIntoView({ block: "start" });
+        console.log("here");
       }
     });
   }
@@ -320,7 +324,7 @@ export default class Menu extends Phaser.Scene {
       .setScale(this.assetsScale);
 
     this.btnInfo.on("pointerdown", () => {
-      this.tutorial.setDepth(1);
+      this.drawTutorial();
     });
   }
 
@@ -427,7 +431,7 @@ export default class Menu extends Phaser.Scene {
     this.tutorial = this.add
       .image(this.scale.width / 2, 0, ASSETS.tutorial_1.key)
       .setOrigin(0.5, 0)
-      .setDepth(-1)
+      .setDepth(1)
       .setInteractive();
 
     const scaleX = this.cameras.main.width / this.tutorial.width;

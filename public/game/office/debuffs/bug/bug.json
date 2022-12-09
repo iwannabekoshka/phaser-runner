@@ -1,0 +1,276 @@
+{
+	"frames": {
+		"bug_1": {
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_2": {
+			"frame": {
+				"x": 239,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_3": {
+			"frame": {
+				"x": 0,
+				"y": 239,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_4": {
+			"frame": {
+				"x": 239,
+				"y": 239,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_5": {
+			"frame": {
+				"x": 0,
+				"y": 478,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_6": {
+			"frame": {
+				"x": 239,
+				"y": 478,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_7": {
+			"frame": {
+				"x": 0,
+				"y": 717,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_8": {
+			"frame": {
+				"x": 239,
+				"y": 717,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_9": {
+			"frame": {
+				"x": 0,
+				"y": 956,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_10": {
+			"frame": {
+				"x": 239,
+				"y": 956,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_11": {
+			"frame": {
+				"x": 0,
+				"y": 1195,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_12": {
+			"frame": {
+				"x": 239,
+				"y": 1195,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		},
+		"bug_13": {
+			"frame": {
+				"x": 0,
+				"y": 1434,
+				"w": 239,
+				"h": 239
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 239,
+				"h": 239
+			},
+			"sourceSize": {
+				"w": 239,
+				"h": 239
+			}
+		}
+	},
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "bug",
+		"format": "RGBA8888",
+		"size": {
+			"w": 478,
+			"h": 1673
+		},
+		"scale": "1",
+		"smartupdate": "$TexturePacker:SmartUpdate:efdfc5fe6b1abcc8ac0932d45ca6ffe7:cb0f5c495df77579939ee4c2180c7cd2:2320c35167c7522c7b3c11f94f5163d0$"
+	}
+}
