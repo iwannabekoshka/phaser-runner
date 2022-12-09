@@ -106,6 +106,11 @@ export default class Menu extends Phaser.Scene {
    */
   btnFullscreen!: Phaser.GameObjects.Image;
 
+  isFullscreen = false;
+
+  lastFullscreenClickTime = 0;
+  fullscreenClickDelay = 200;
+
   /**
    * Кубок
    */
@@ -354,11 +359,17 @@ export default class Menu extends Phaser.Scene {
       .setScale(this.assetsScale);
 
     this.btnFullscreen.on("pointerup", () => {
-      if (this.scale.isFullscreen) {
-        this.scale.stopFullscreen();
-      } else {
-        this.scale.startFullscreen();
+      console.log("fullsrn");
+
+      if (
+        this.lastFullscreenClickTime >=
+        Date.now() - this.fullscreenClickDelay
+      ) {
+        return;
       }
+      this.lastFullscreenClickTime = Date.now();
+
+      this.scale.toggleFullscreen();
 
       // document
       //   .querySelector("#canvas-container")!
