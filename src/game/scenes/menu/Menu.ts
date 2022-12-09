@@ -156,6 +156,18 @@ export default class Menu extends Phaser.Scene {
   create() {
     console.log("menu");
 
+    window.addEventListener("orientationchange", (event) => {
+      // Небольшой хак, чтобы поресайзить игру туда-сюда, иначе она сама не подстраивается
+      document.querySelector("#canvas-container")?.classList.toggle("w-100");
+      setTimeout(
+        () =>
+          document
+            .querySelector("#canvas-container")
+            ?.classList.toggle("w-100"),
+        30
+      );
+    });
+
     if (
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
