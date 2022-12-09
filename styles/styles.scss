@@ -57,6 +57,8 @@ h1 {
 
 #canvas-container {
   aspect-ratio: 1110 / 624;
+  max-height: 95vh;
+  margin-inline: auto;
 }
 
 .fullscreen {

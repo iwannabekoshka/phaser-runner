@@ -12,18 +12,18 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 500,
-    xTo: 500,
+    xFrom: 100,
+    xTo: 100,
   },
   {
     name: ASSETS.buffPvs.key,
-    xFrom: 500,
-    xTo: 500,
+    xFrom: 100,
+    xTo: 100,
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 500,
-    xTo: 500,
+    xFrom: 100,
+    xTo: 100,
   },
   {
     name: ASSETS.coin.key,

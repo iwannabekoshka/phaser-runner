@@ -53,6 +53,8 @@ export default class GameOver extends Phaser.Scene {
     super(SCENES.end);
   }
 
+  thisScene = this;
+
   /**
    * Карточка с контентом
    */
@@ -301,8 +303,6 @@ export default class GameOver extends Phaser.Scene {
       .getElementsByTagName("form")[0]
       .addEventListener("submit", (e) => {
         this.submitUsernameFormHandler(e);
-        this.removeForm();
-        this.drawLeaderboard();
       });
 
     const text = `Сохраним твой результат? Чтобы все \n знали кто такой молодец`;
@@ -335,9 +335,6 @@ export default class GameOver extends Phaser.Scene {
       .setOrigin(0.5, 0);
     this.btnSaveUsername.on("pointerdown", () => {
       this.submitUsernameFormHandler();
-
-      this.removeForm();
-      this.drawLeaderboard();
     });
   }
 
@@ -365,6 +362,8 @@ export default class GameOver extends Phaser.Scene {
     }
 
     localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
+    this.thisScene.removeForm();
+    this.thisScene.drawLeaderboard();
   }
 
   /**
