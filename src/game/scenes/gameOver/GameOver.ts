@@ -73,7 +73,7 @@ export default class GameOver extends Phaser.Scene {
   /**
    * Количество очков чтоб получить триал
    */
-  scoreForWin = 1;
+  scoreForWin = 100;
 
   /**
    * Ссылка на триал

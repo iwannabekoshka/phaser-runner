@@ -12,18 +12,18 @@ const overlapEntities = [
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 10,
-    xTo: 10,
+    xFrom: 500,
+    xTo: 500,
   },
   {
     name: ASSETS.buffPvs.key,
-    xFrom: 10,
-    xTo: 10,
+    xFrom: 500,
+    xTo: 500,
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 0,
-    xTo: 0,
+    xFrom: 500,
+    xTo: 500,
   },
   {
     name: ASSETS.coin.key,
@@ -274,7 +274,7 @@ export default class Game extends Phaser.Scene {
     this.playBuffAnimationAndRespawn(ASSETS.coin.key);
 
     // Увеличиваем счет
-    this.score += 50;
+    this.score += 50 * this.salaryMultiplier;
 
     this.updateScoreLabel();
   }
@@ -314,10 +314,10 @@ export default class Game extends Phaser.Scene {
    * Рисует текст множителя зп
    */
   drawScoreMultiplierLabel(): void {
-    const FZ = 42;
+    const FZ = 36;
     this.salaryMultiplierLabel = this.add
       .text(
-        this.scoreLabel.width + 50,
+        this.scoreLabel.width + 60,
         this.scoreLabel.y + this.scoreLabel.height / 2 - FZ / 2,
         `Х${this.salaryMultiplier}`,
         {
@@ -342,7 +342,7 @@ export default class Game extends Phaser.Scene {
    * Обновляет текст множителя зп
    */
   updateScoreMultiplierLabel(): void {
-    this.salaryMultiplierLabel.x = this.scoreLabel.width + 50;
+    this.salaryMultiplierLabel.x = this.scoreLabel.width + 60;
     this.salaryMultiplierLabel.text = `Х${this.salaryMultiplier}`;
   }
 
@@ -368,9 +368,9 @@ export default class Game extends Phaser.Scene {
     let x = rightEdge + 100;
 
     // Рандомное количество дебаффов
+    const numDebuffs = Phaser.Math.Between(1, 4);
     // DEMO:
-    // const numDebuffs = Phaser.Math.Between(1, 4);
-    const numDebuffs = 1000;
+    // const numDebuffs = 1000;
 
     const debuffsAssets = [
       {
@@ -378,22 +378,22 @@ export default class Game extends Phaser.Scene {
         scale: 1,
         animation: "animationDebuffBugIdle",
       },
-      // {
-      //   key: "debuffDeadline",
-      //   scale: 0.75,
-      // },
-      // {
-      //   key: "debuffDebt",
-      //   scale: 1,
-      // },
-      // {
-      //   key: "debuffDeploy",
-      //   scale: 1,
-      // },
-      // {
-      //   key: "debuffTestFailed",
-      //   scale: 1,
-      // },
+      {
+        key: "debuffDeadline",
+        scale: 0.75,
+      },
+      {
+        key: "debuffDebt",
+        scale: 1,
+      },
+      {
+        key: "debuffDeploy",
+        scale: 1,
+      },
+      {
+        key: "debuffTestFailed",
+        scale: 1,
+      },
     ];
 
     for (let i = 0; i < numDebuffs; i++) {
@@ -412,7 +412,7 @@ export default class Game extends Phaser.Scene {
 
       if (randomAsset.animation) {
         // @ts-ignore
-        debuff.play(ASSETS[randomAsset.key].animations.idle).setScale(0.5);
+        debuff.play(ASSETS[randomAsset.key].animations.idle).setScale(0.3);
       }
 
       debuff.setY(this.scale.height - this.worldBoundBottom);
@@ -426,17 +426,15 @@ export default class Game extends Phaser.Scene {
       body.setSize(body.width);
       body.allowGravity = false;
       body.enable = true;
-      // Не нашел, как задизейблить гравитацию, так что просто
-      // даем ускорение в обратную сторону
-      // body.setAccelerationY(-1800);
 
       // body.updateFromGameObject();
       body.reset(x, this.scale.height - this.worldBoundBottom);
+      body.updateBounds();
 
       // move x a random amount
+      x += debuff.width * Phaser.Math.Between(2, 6);
       // DEMO:
-      // x += debuff.width * Phaser.Math.Between(4, 6);
-      x += 100;
+      // x += debuff.width + 10;
     }
   }
 
@@ -671,7 +669,9 @@ export default class Game extends Phaser.Scene {
     this.buffX2PickupText = this.add
       .text(
         this.scale.width / 2,
-        this.salaryMultiplierLabel.y + this.salaryMultiplierLabel.height / 2,
+        this.salaryMultiplierLabel.y +
+          this.salaryMultiplierLabel.height / 2 +
+          2,
         "ТЫ ПОЛУЧИЛ ПОВЫШЕНИЕ!",
         {
           fontFamily: "lifeisstrangeru",
@@ -758,7 +758,7 @@ export default class Game extends Phaser.Scene {
    */
   drawMentorIndicator(): void {
     this.mentorIndicator = this.add
-      .sprite(this.scale.width - 40, 40, ASSETS.mentorIndicator.key)
+      .sprite(this.scale.width - 20, 0, ASSETS.mentorIndicator.key)
       .setOrigin(1, 0)
       .setScale(0.6)
       .setAlpha(0)
