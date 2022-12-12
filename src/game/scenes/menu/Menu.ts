@@ -159,7 +159,10 @@ export default class Menu extends Phaser.Scene {
 
   // Создание всего и вся
   create() {
-    console.log("menu");
+    // На мобилках тач евенты два раза отрабатывают без этого
+    if (game.device.input.touch) {
+      game.input.mouse.enabled = false;
+    }
 
     window.addEventListener("orientationchange", (event) => {
       // Небольшой хак, чтобы поресайзить игру туда-сюда, иначе она сама не подстраивается
