@@ -78,7 +78,8 @@ export default class GameOver extends Phaser.Scene {
   /**
    * Ссылка на триал
    */
-  urlForWinner = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  // urlForWinner = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  urlForWinner = "https://r.mtdv.me/UmzSzM5Iu5";
 
   /**
    * Кнопка Начать заново
