@@ -21,6 +21,12 @@
       .runner-text-input:focus {
         outline: none;
       }
+      .runner-text-input.error {
+        border-color: red;
+      }
+      .runner-text-input.correct {
+        border-color: green;
+      }
     </style>
   </head>
   <body>
@@ -29,7 +35,7 @@
         type="text"
         class="runner-text-input"
         name="username"
-        placeholder="Enter your nickname"
+        placeholder="Enter your nickname..."
       />
     </form>
   </body>

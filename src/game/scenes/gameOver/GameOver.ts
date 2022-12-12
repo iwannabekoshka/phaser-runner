@@ -306,6 +306,23 @@ export default class GameOver extends Phaser.Scene {
       .addEventListener("submit", (e) => {
         this.submitUsernameFormHandler(e);
       });
+    this.form.node.addEventListener("input", (e) => {
+      // @ts-ignore
+      if (!e.target?.name || e.target.name !== "username") {
+        return;
+      }
+
+      if (
+        e.target.value.trim().length < 3 ||
+        e.target.value.trim().length > 15
+      ) {
+        e.target.classList.add("error");
+        e.target.classList.remove("correct");
+      } else {
+        e.target.classList.remove("error");
+        e.target.classList.add("correct");
+      }
+    });
 
     const text = `Сохраним твой результат? Чтобы все \n знали кто такой молодец`;
     this.formText = this.add
