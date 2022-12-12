@@ -7,28 +7,28 @@ import Player, { PlayerState } from "./Player";
 const overlapEntities = [
   {
     name: ASSETS.buffX2.key,
-    xFrom: 0,
-    xTo: 0.5,
+    xFrom: 5,
+    xTo: 15,
   },
   {
     name: ASSETS.buffBreak.key,
-    xFrom: 500,
-    xTo: 500,
+    xFrom: 8,
+    xTo: 10,
   },
   {
     name: ASSETS.buffPvs.key,
-    xFrom: 500,
-    xTo: 500,
+    xFrom: 7,
+    xTo: 11,
   },
   {
     name: ASSETS.buffMentor.key,
-    xFrom: 500,
-    xTo: 500,
+    xFrom: 10,
+    xTo: 12,
   },
   {
     name: ASSETS.coin.key,
     xFrom: 0,
-    xTo: 0.5,
+    xTo: 0.1,
   },
 ];
 
@@ -368,7 +368,7 @@ export default class Game extends Phaser.Scene {
     let x = rightEdge + 100;
 
     // Рандомное количество дебаффов
-    const numDebuffs = Phaser.Math.Between(1, 4);
+    const numDebuffs = Phaser.Math.Between(2, 8);
     // DEMO:
     // const numDebuffs = 1000;
 
@@ -423,7 +423,7 @@ export default class Game extends Phaser.Scene {
 
       // enable and adjust physics body to be a circle
       const body = debuff.body as Phaser.Physics.Arcade.Body;
-      body.setSize(body.width);
+      body.setSize(body.width * 0.8, body.height & 0.8);
       body.allowGravity = false;
       body.enable = true;
 
@@ -432,7 +432,7 @@ export default class Game extends Phaser.Scene {
       body.updateBounds();
 
       // move x a random amount
-      x += debuff.width * Phaser.Math.Between(2, 6);
+      x += debuff.width * Phaser.Math.Between(5, 6);
       // DEMO:
       // x += debuff.width + 10;
     }
