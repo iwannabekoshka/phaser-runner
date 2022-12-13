@@ -2,7 +2,12 @@ import * as Phaser from "phaser";
 import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import BitmapText = Phaser.GameObjects.BitmapText;
-import { LOCAL_STORAGE_SCORE, LOCAL_STORAGE_USERNAME } from "../../CONSTS";
+import {
+  API_LEADBOARD,
+  LOCAL_STORAGE_SCORE,
+  LOCAL_STORAGE_USERNAME,
+} from "../../CONSTS";
+import axios, { AxiosError } from "axios";
 
 // DEMO:
 const RECORDS = [
@@ -285,7 +290,28 @@ export default class GameOver extends Phaser.Scene {
       this.leaderboardLink.setDepth(-10).setAlpha(0);
 
       if (this.username) {
-        this.drawLeaderboard();
+        axios
+          .post(API_LEADBOARD, {
+            username: this.username,
+            isLoggedIn: Boolean(this.username),
+            score: this.score,
+          })
+          .then(
+            (data: {
+              data: { username: string; score: number; position: number }[];
+            }) => {
+              localStorage.setItem(
+                LOCAL_STORAGE_USERNAME,
+                this.username as string
+              );
+              // @ts-ignore
+              this.thisScene.drawLeaderboard(data.data);
+              this.btnRestart.setInteractive();
+            }
+          )
+          .catch((data: AxiosError) => {
+            console.log(data);
+          });
       } else {
         this.drawUsernameForm();
       }
@@ -347,8 +373,25 @@ export default class GameOver extends Phaser.Scene {
       .setOrigin(0.5, 0);
     this.btnSkipUsername.on("pointerup", () => {
       this.removeForm();
-      this.drawLeaderboard();
-      setTimeout(() => this.btnRestart.setInteractive(), 100);
+
+      axios
+        .post(API_LEADBOARD, {
+          isLoggedIn: Boolean(this.username),
+          score: this.score,
+        })
+        .then(
+          (data: {
+            data: { username: string; score: number; position: number }[];
+          }) => {
+            this.thisScene.removeForm();
+            // @ts-ignore
+            this.thisScene.drawLeaderboard(data.data);
+            setTimeout(() => this.btnRestart.setInteractive(), 100);
+          }
+        )
+        .catch((data: AxiosError) => {
+          console.log(data);
+        });
     });
 
     this.btnSaveUsername = this.add
@@ -368,7 +411,7 @@ export default class GameOver extends Phaser.Scene {
   }
 
   submitUsernameFormHandler(e?: SubmitEvent) {
-    let username;
+    let username: string;
 
     if (e) {
       e.preventDefault();
@@ -383,16 +426,39 @@ export default class GameOver extends Phaser.Scene {
       return;
     }
 
-    localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
-    this.thisScene.removeForm();
-    this.thisScene.drawLeaderboard();
-    this.btnRestart.setInteractive();
+    axios
+      .post(API_LEADBOARD, {
+        username: username,
+        isLoggedIn: Boolean(this.username),
+        score: this.score,
+      })
+      .then(
+        (data: {
+          data: { username: string; score: number; position: number }[];
+        }) => {
+          localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
+          this.thisScene.removeForm();
+          // @ts-ignore
+          this.thisScene.drawLeaderboard(data.data);
+          this.btnRestart.setInteractive();
+        }
+      )
+      .catch((data: AxiosError) => {
+        // @ts-ignore
+        const errorMessage = data?.response?.data?.message;
+
+        if (errorMessage === "this username is busy") {
+          this.formText.setText("Такой никнейм занят, давай другой");
+        }
+      });
   }
 
   /**
    * Рисует таблицу лидеров
    */
-  drawLeaderboard() {
+  drawLeaderboard(
+    records: { username: string; score: number; position: number }[]
+  ) {
     this.btnRestart.setDepth(10).setAlpha(1);
 
     this.leaderboard = this.add
@@ -412,16 +478,16 @@ export default class GameOver extends Phaser.Scene {
     const fontSize = "18px";
     const lineSpacing = 2;
 
-    RECORDS.forEach((record, index) => {
-      if ((index + 1).toString().length === 1) {
-        colNum += `0${index + 1}.\n`;
+    records.forEach((record, index) => {
+      if (record.position.toString().length === 1) {
+        colNum += `0${record.position}.\n`;
       } else {
-        colNum += `${index + 1}.\n`;
+        colNum += `${record.position}.\n`;
       }
 
-      colName += `${record.name}\n`;
+      colName += `${record.username}\n`;
 
-      colRecord += `$${record.record}\n`;
+      colRecord += `$${record.score}\n`;
     });
 
     const leaderboardColNum = this.add
