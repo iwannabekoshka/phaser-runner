@@ -307,20 +307,22 @@ export default class GameOver extends Phaser.Scene {
         this.submitUsernameFormHandler(e);
       });
     this.form.node.addEventListener("input", (e) => {
-      // @ts-ignore
-      if (!e.target?.name || e.target.name !== "username") {
+      const target = e.target as HTMLInputElement;
+
+      if (!target) {
         return;
       }
 
-      if (
-        e.target.value.trim().length < 3 ||
-        e.target.value.trim().length > 15
-      ) {
-        e.target.classList.add("error");
-        e.target.classList.remove("correct");
+      if (!target?.name || target.name !== "username") {
+        return;
+      }
+
+      if (target.value.trim().length < 3 || target.value.trim().length > 15) {
+        target.classList.add("error");
+        target.classList.remove("correct");
       } else {
-        e.target.classList.remove("error");
-        e.target.classList.add("correct");
+        target.classList.remove("error");
+        target.classList.add("correct");
       }
     });
 
