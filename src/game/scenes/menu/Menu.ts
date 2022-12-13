@@ -3,9 +3,10 @@ import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import { createButtonWithGradient } from "../utils/createButtonWithGradient";
 import game from "../../game";
-import { LOCAL_STORAGE_SCORE } from "../../CONSTS";
+import { API_LEADBOARD, LOCAL_STORAGE_SCORE } from "../../CONSTS";
+import axios from "axios";
 
-const records = [
+const RECORDS = [
   {
     name: "User",
     record: "1234567890",
@@ -158,7 +159,7 @@ export default class Menu extends Phaser.Scene {
   preload() {}
 
   // Создание всего и вся
-  create() {
+  async create() {
     // На мобилках тач евенты два раза отрабатывают без этого
     if (game.device.input.touch) {
       game.input.mouse.enabled = false;
@@ -191,6 +192,8 @@ export default class Menu extends Phaser.Scene {
     // this.drawBtnMute();
     this.drawBtnInfo();
 
+    await this.drawLeaderboard();
+
     if (
       /Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     ) {
@@ -198,7 +201,6 @@ export default class Menu extends Phaser.Scene {
     }
 
     this.drawHighScore();
-    this.drawLeaderboard();
     // this.drawBtnSubscribe();
     this.drawBtnBack();
   }
@@ -264,13 +266,12 @@ export default class Menu extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setScale(this.assetsScale);
 
-    this.btnLeaderboard.on("pointerdown", () => {
+    this.btnLeaderboard.on("pointerdown", async () => {
       this.bg.setDepth(1);
       this.leaderboard.setDepth(2);
       this.leaderboardColNum.setDepth(3);
       this.leaderboardColName.setDepth(3);
       this.leaderboardColRecord.setDepth(3);
-      // this.btnSubscribe.setDepth(3);
       this.btnBack.setDepth(3);
     });
   }
@@ -480,7 +481,7 @@ export default class Menu extends Phaser.Scene {
   /**
    * Рисует таблицу лидеров
    */
-  drawLeaderboard() {
+  async drawLeaderboard() {
     this.leaderboard = this.add
       .image(
         this.scale.width / 2,
@@ -499,6 +500,13 @@ export default class Menu extends Phaser.Scene {
     const fontSize = "18px";
     const lineSpacing = 2;
 
+    const response = await axios.get(API_LEADBOARD);
+    const records = response.data as {
+      username: string;
+      score: number;
+      position: number;
+    }[];
+
     records.forEach((record, index) => {
       if ((index + 1).toString().length === 1) {
         colNum += `0${index + 1}.\n`;
@@ -506,9 +514,9 @@ export default class Menu extends Phaser.Scene {
         colNum += `${index + 1}.\n`;
       }
 
-      colName += `${record.name}\n`;
+      colName += `${record.username}\n`;
 
-      colRecord += `$${record.record}\n`;
+      colRecord += `$${record.score}\n`;
     });
 
     this.leaderboardColNum = this.add
@@ -522,11 +530,16 @@ export default class Menu extends Phaser.Scene {
     this.leaderboardColNum.setLineSpacing(lineSpacing);
 
     this.leaderboardColName = this.add
-      .text(330 + 100, offsetTop, colName, {
-        fontFamily: "lifeisstrangeru",
-        color: "white",
-        fontSize,
-      })
+      .text(
+        this.leaderboardColNum.x + this.leaderboardColNum.width / 2 + 40,
+        offsetTop,
+        colName,
+        {
+          fontFamily: "lifeisstrangeru",
+          color: "white",
+          fontSize,
+        }
+      )
       .setDepth(-1)
       .setOrigin(0.5, 0);
     this.leaderboardColName.setLineSpacing(lineSpacing);
