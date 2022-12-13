@@ -260,7 +260,7 @@ export default class Preloader extends Phaser.Scene {
         { key: ASSETS.player.key, frame: "donut_run_25.png" },
         { key: ASSETS.player.key, frame: "donut_run_26.png" },
       ],
-      frameRate: 10,
+      frameRate: 20,
       repeat: -1, // infinity
     });
   }

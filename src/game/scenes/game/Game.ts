@@ -7,18 +7,18 @@ import Player, { PlayerState } from "./Player";
 const overlapEntities = [
   {
     name: ASSETS.buffX2.key,
+    xFrom: 12,
+    xTo: 13,
+  },
+  {
+    name: ASSETS.buffBreak.key,
     xFrom: 5,
     xTo: 15,
   },
   {
-    name: ASSETS.buffBreak.key,
-    xFrom: 8,
-    xTo: 10,
-  },
-  {
     name: ASSETS.buffPvs.key,
     xFrom: 7,
-    xTo: 11,
+    xTo: 8,
   },
   {
     name: ASSETS.buffMentor.key,
@@ -694,6 +694,7 @@ export default class Game extends Phaser.Scene {
     this.salary *= 2;
     this.player.setDonutAnimation(true);
     this.player.isDonut = true;
+    this.score += 50 * this.salaryMultiplier;
 
     this.player.stopPlayerByBreak().then(() => {
       this.player.isInvincible = false;
