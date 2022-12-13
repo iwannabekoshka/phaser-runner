@@ -284,34 +284,43 @@ export default class GameOver extends Phaser.Scene {
       .setInteractive({ cursor: "pointer" })
       .setOrigin(0.5, 0);
 
+    let records = [
+      { username: "Some error occured :(", position: 1, score: 99999 },
+    ];
+
+    if (this.username) {
+      axios
+        .post(API_LEADBOARD, {
+          username: this.username,
+          isLoggedIn: Boolean(this.username),
+          score: this.score,
+        })
+        .then(
+          (data: {
+            data: { username: string; score: number; position: number }[];
+          }) => {
+            localStorage.setItem(
+              LOCAL_STORAGE_USERNAME,
+              this.username as string
+            );
+            records = data.data;
+          }
+        )
+        .catch((data: AxiosError) => {
+          console.log(data);
+        });
+    } else {
+    }
+
     this.leaderboardLink.on("pointerup", () => {
       this.unicorn.setDepth(-10).setAlpha(0);
       this.unicornText.setDepth(-10).setAlpha(0);
       this.leaderboardLink.setDepth(-10).setAlpha(0);
 
       if (this.username) {
-        axios
-          .post(API_LEADBOARD, {
-            username: this.username,
-            isLoggedIn: Boolean(this.username),
-            score: this.score,
-          })
-          .then(
-            (data: {
-              data: { username: string; score: number; position: number }[];
-            }) => {
-              localStorage.setItem(
-                LOCAL_STORAGE_USERNAME,
-                this.username as string
-              );
-              // @ts-ignore
-              this.thisScene.drawLeaderboard(data.data);
-              this.btnRestart.setInteractive();
-            }
-          )
-          .catch((data: AxiosError) => {
-            console.log(data);
-          });
+        // @ts-ignore
+        this.thisScene.drawLeaderboard(records);
+        this.btnRestart.setInteractive();
       } else {
         this.drawUsernameForm();
       }
