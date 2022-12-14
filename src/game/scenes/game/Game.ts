@@ -719,20 +719,20 @@ export default class Game extends Phaser.Scene {
   handleInvincibilityCollect(): void {
     this.playBuffAnimationAndRespawn(ASSETS.buffPvs.key);
     this.player.isInvincible = true;
-    this.player.toggleShield(true);
 
     // Ресетим состояние щита при подборе
     this.player.setPvsShieldBlinking(false);
     clearTimeout(this.buffPvsTimeout);
     clearTimeout(this.buffPvsBlinkingTimeout);
+    this.player.toggleShield(true);
 
     this.buffPvsBlinkingTimeout = setTimeout(() => {
       this.player.setPvsShieldBlinking();
     }, 7000);
     this.buffPvsTimeout = setTimeout(() => {
       this.player.isInvincible = false;
-      this.player.toggleShield(false);
       this.player.setPvsShieldBlinking(false);
+      this.player.toggleShield(false);
     }, 10000);
   }
 
