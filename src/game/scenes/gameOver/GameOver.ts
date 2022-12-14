@@ -148,9 +148,7 @@ export default class GameOver extends Phaser.Scene {
 
   init(data: any) {
     this.username = localStorage.getItem(LOCAL_STORAGE_USERNAME);
-    this.username = "BelzePoop";
-    // this.score = data.score;
-    this.score = 6666;
+    this.score = data.score;
 
     const prevHighScore = localStorage.getItem(LOCAL_STORAGE_SCORE) || 0;
 
