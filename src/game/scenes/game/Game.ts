@@ -375,24 +375,29 @@ export default class Game extends Phaser.Scene {
     const debuffsAssets = [
       {
         key: "debuffBugDancing",
-        scale: 1,
+        scale: 0.3,
+        bodyScale: 0.6,
         animation: "animationDebuffBugIdle",
       },
       {
         key: "debuffDeadline",
         scale: 0.75,
+        bodyScale: 0.75,
       },
       {
         key: "debuffDebt",
         scale: 1,
+        bodyScale: 0.8,
       },
       {
         key: "debuffDeploy",
         scale: 1,
+        bodyScale: 0.9,
       },
       {
         key: "debuffTestFailed",
         scale: 1,
+        bodyScale: 0.7,
       },
     ];
 
@@ -412,7 +417,7 @@ export default class Game extends Phaser.Scene {
 
       if (randomAsset.animation) {
         // @ts-ignore
-        debuff.play(ASSETS[randomAsset.key].animations.idle).setScale(0.3);
+        debuff.play(ASSETS[randomAsset.key].animations.idle);
       }
 
       debuff.setY(this.scale.height - this.worldBoundBottom);
@@ -423,7 +428,10 @@ export default class Game extends Phaser.Scene {
 
       // enable and adjust physics body to be a circle
       const body = debuff.body as Phaser.Physics.Arcade.Body;
-      body.setSize(body.width * 0.8, body.height & 0.8);
+      body.setSize(
+        body.width * randomAsset.bodyScale,
+        body.height * randomAsset.bodyScale
+      );
       body.allowGravity = false;
       body.enable = true;
 
@@ -432,7 +440,7 @@ export default class Game extends Phaser.Scene {
       body.updateBounds();
 
       // move x a random amount
-      x += debuff.width * Phaser.Math.Between(5, 6);
+      x += debuff.width * Phaser.Math.Between(6, 7);
       // DEMO:
       // x += debuff.width + 10;
     }
