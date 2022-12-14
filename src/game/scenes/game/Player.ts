@@ -84,7 +84,7 @@ export default class Player extends Phaser.GameObjects.Container {
   /**
    * Время перерыва
    */
-  breakTime = 1200;
+  breakTime = 2000;
 
   isDonut = false;
 
