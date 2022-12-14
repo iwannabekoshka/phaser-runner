@@ -447,7 +447,17 @@ export default class Menu extends Phaser.Scene {
         ASSETS.cup.key
       )
       .setOrigin(0, 0.5)
-      .setScale(this.assetsScale);
+      .setScale(this.assetsScale)
+      .setInteractive({ cursor: "pointer" });
+
+    this.cup.on("pointerup", () => {
+      this.bg.setDepth(1);
+      this.leaderboard.setDepth(2);
+      this.leaderboardColNum.setDepth(3);
+      this.leaderboardColName.setDepth(3);
+      this.leaderboardColRecord.setDepth(3);
+      this.btnBack.setDepth(3);
+    });
   }
 
   /**
@@ -531,7 +541,7 @@ export default class Menu extends Phaser.Scene {
 
     this.leaderboardColName = this.add
       .text(
-        this.leaderboardColNum.x + this.leaderboardColNum.width / 2 + 60,
+        this.leaderboardColNum.x + this.leaderboardColNum.width / 2 + 70,
         offsetTop,
         colName,
         {

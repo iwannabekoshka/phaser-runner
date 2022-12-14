@@ -510,7 +510,7 @@ export default class GameOver extends Phaser.Scene {
 
     const leaderboardColName = this.add
       .text(
-        leaderboardColNum.x + leaderboardColNum.width / 2 + 60,
+        leaderboardColNum.x + leaderboardColNum.width / 2 + 70,
         offsetTop,
         colName,
         {
