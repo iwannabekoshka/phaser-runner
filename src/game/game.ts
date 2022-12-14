@@ -5,7 +5,7 @@ import Preloader from "./scenes/preloader/Preloader";
 import GameOver from "./scenes/gameOver/GameOver";
 
 export default new Phaser.Game({
-  type: Phaser.CANVAS,
+  type: Phaser.WEBGL,
   scale: {
     mode: Phaser.Scale.FIT,
     parent: <HTMLDivElement>document.querySelector("#canvas-container"),
@@ -26,7 +26,7 @@ export default new Phaser.Game({
     arcade: {
       gravity: { y: 1600 },
       // TODO: не заливать на прод
-      // debug: true,
+      debug: true,
     },
   },
 });
