@@ -3,7 +3,11 @@ import { SCENES } from "../SCENES";
 import ASSETS from "../../ASSETS";
 import { createButtonWithGradient } from "../utils/createButtonWithGradient";
 import game from "../../game";
-import { API_LEADBOARD, LOCAL_STORAGE_SCORE } from "../../CONSTS";
+import {
+  API_LEADBOARD,
+  LOCAL_STORAGE_SCORE,
+  LOCAL_STORAGE_TUTORIAL_COMPLETED,
+} from "../../CONSTS";
 import axios from "axios";
 
 const RECORDS = [
@@ -245,7 +249,11 @@ export default class Menu extends Phaser.Scene {
       .setScale(this.assetsScale);
 
     this.btnStart.on("pointerdown", () => {
-      this.scene.start(SCENES.game);
+      if (localStorage.getItem(LOCAL_STORAGE_TUTORIAL_COMPLETED)) {
+        this.scene.start(SCENES.game);
+      } else {
+        this.drawTutorial();
+      }
     });
   }
 
@@ -479,12 +487,18 @@ export default class Menu extends Phaser.Scene {
     spaceBar.on("down", () => {
       this.tutorial.setTexture(ASSETS.tutorial_2.key);
 
-      spaceBar.on("down", () => this.goGameScene());
+      spaceBar.on("down", () => {
+        localStorage.setItem(LOCAL_STORAGE_TUTORIAL_COMPLETED, "true");
+        this.goGameScene();
+      });
     });
     this.tutorial.on("pointerdown", () => {
       this.tutorial.setTexture(ASSETS.tutorial_2.key);
 
-      this.tutorial.on("pointerdown", () => this.goGameScene());
+      this.tutorial.on("pointerdown", () => {
+        localStorage.setItem(LOCAL_STORAGE_TUTORIAL_COMPLETED, "true");
+        this.goGameScene();
+      });
     });
   }
 
