@@ -531,7 +531,7 @@ export default class Menu extends Phaser.Scene {
 
     this.leaderboardColName = this.add
       .text(
-        this.leaderboardColNum.x + this.leaderboardColNum.width / 2 + 40,
+        this.leaderboardColNum.x + this.leaderboardColNum.width / 2 + 60,
         offsetTop,
         colName,
         {

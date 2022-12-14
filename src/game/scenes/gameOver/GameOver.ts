@@ -509,11 +509,16 @@ export default class GameOver extends Phaser.Scene {
     leaderboardColNum.setLineSpacing(lineSpacing);
 
     const leaderboardColName = this.add
-      .text(330 + 100, offsetTop, colName, {
-        fontFamily: "lifeisstrangeru",
-        color: "white",
-        fontSize,
-      })
+      .text(
+        leaderboardColNum.x + leaderboardColNum.width / 2 + 60,
+        offsetTop,
+        colName,
+        {
+          fontFamily: "lifeisstrangeru",
+          color: "white",
+          fontSize,
+        }
+      )
       .setOrigin(0.5, 0);
     leaderboardColName.setLineSpacing(lineSpacing);
 
