@@ -7,7 +7,7 @@
 const ASSETS = {
   bg: {
     key: "bg",
-    imageUrl: "/game/office/background_new_cut.png",
+    imageUrl: "/game/office/background_cut.png",
   },
   player: {
     key: "player",
